@@ -1,6 +1,6 @@
 # Talker Project
-# Course: Building IT Systems
-# Contributors : Nguyen Duc Gia Bao, Nguyen Ngoc Xuan Trieu
+## Course: Building IT Systems
+## Contributors : Nguyen Duc Gia Bao, Nguyen Ngoc Xuan Trieu
 
 Libraries used:
 
