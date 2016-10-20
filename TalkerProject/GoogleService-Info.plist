@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>366757086342-pbroraooih6l7p6a6bo5qf1uglli9188.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.366757086342-pbroraooih6l7p6a6bo5qf1uglli9188</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCGRdXxNUW7Liw7VbgD7IPYlvmEl7hMXLQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>366757086342</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>RMITUniversity.TalkerProject</string>
+	<key>PROJECT_ID</key>
+	<string>talkerproject-934bc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>talkerproject-934bc.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:366757086342:ios:0fedb3c9fb93b9af</string>
+	<key>DATABASE_URL</key>
+	<string>https://talkerproject-934bc.firebaseio.com</string>
+</dict>
+</plist>

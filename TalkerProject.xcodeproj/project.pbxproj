@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A059AE13384D6B062578B01E /* Pods_TalkerProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0396FAC0CA41BAB8FCEBFF8F /* Pods_TalkerProject.framework */; };
 		E3271C8D1DB5FEF700F98EDD /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3271C8C1DB5FEF700F98EDD /* LoginController.swift */; };
+		E3271C8F1DB7E37300F98EDD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3271C8E1DB7E37300F98EDD /* GoogleService-Info.plist */; };
 		E34B266A1DB4A9C9002F4598 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B26691DB4A9C9002F4598 /* AppDelegate.swift */; };
 		E34B266C1DB4A9C9002F4598 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B266B1DB4A9C9002F4598 /* ViewController.swift */; };
 		E34B266F1DB4A9C9002F4598 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E34B266D1DB4A9C9002F4598 /* Main.storyboard */; };
@@ -16,7 +18,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0396FAC0CA41BAB8FCEBFF8F /* Pods_TalkerProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TalkerProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E8130DDFD9CA5358214EA1D /* Pods-TalkerProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TalkerProject.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TalkerProject/Pods-TalkerProject.debug.xcconfig"; sourceTree = "<group>"; };
+		693869846EF5DD8C9F71CECE /* Pods-TalkerProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TalkerProject.release.xcconfig"; path = "Pods/Target Support Files/Pods-TalkerProject/Pods-TalkerProject.release.xcconfig"; sourceTree = "<group>"; };
 		E3271C8C1DB5FEF700F98EDD /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		E3271C8E1DB7E37300F98EDD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E3271C901DB892C600F98EDD /* TalkerProject.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TalkerProject.entitlements; sourceTree = "<group>"; };
 		E34B26661DB4A9C9002F4598 /* TalkerProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TalkerProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34B26691DB4A9C9002F4598 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E34B266B1DB4A9C9002F4598 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -31,12 +38,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A059AE13384D6B062578B01E /* Pods_TalkerProject.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C7FD0EBBEC2C8F25B2999B0A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1E8130DDFD9CA5358214EA1D /* Pods-TalkerProject.debug.xcconfig */,
+				693869846EF5DD8C9F71CECE /* Pods-TalkerProject.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		E3271C8B1DB5FED200F98EDD /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -51,6 +68,8 @@
 			children = (
 				E34B26681DB4A9C9002F4598 /* TalkerProject */,
 				E34B26671DB4A9C9002F4598 /* Products */,
+				C7FD0EBBEC2C8F25B2999B0A /* Pods */,
+				F5D00A9B719A6FF7468969FD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -65,14 +84,24 @@
 		E34B26681DB4A9C9002F4598 /* TalkerProject */ = {
 			isa = PBXGroup;
 			children = (
+				E3271C901DB892C600F98EDD /* TalkerProject.entitlements */,
 				E3271C8B1DB5FED200F98EDD /* Controllers */,
 				E34B26691DB4A9C9002F4598 /* AppDelegate.swift */,
 				E34B266D1DB4A9C9002F4598 /* Main.storyboard */,
 				E34B26701DB4A9C9002F4598 /* Assets.xcassets */,
 				E34B26721DB4A9C9002F4598 /* LaunchScreen.storyboard */,
+				E3271C8E1DB7E37300F98EDD /* GoogleService-Info.plist */,
 				E34B26751DB4A9C9002F4598 /* Info.plist */,
 			);
 			path = TalkerProject;
+			sourceTree = "<group>";
+		};
+		F5D00A9B719A6FF7468969FD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0396FAC0CA41BAB8FCEBFF8F /* Pods_TalkerProject.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -82,9 +111,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E34B26781DB4A9C9002F4598 /* Build configuration list for PBXNativeTarget "TalkerProject" */;
 			buildPhases = (
+				FD5F33A1E25C116E1F5D59EC /* [CP] Check Pods Manifest.lock */,
 				E34B26621DB4A9C9002F4598 /* Sources */,
 				E34B26631DB4A9C9002F4598 /* Frameworks */,
 				E34B26641DB4A9C9002F4598 /* Resources */,
+				489443FFFAE655A0EE97AECB /* [CP] Embed Pods Frameworks */,
+				3CBE76D0007659DB930DC02C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -107,7 +139,13 @@
 				TargetAttributes = {
 					E34B26651DB4A9C9002F4598 = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = LEH8XEP9K4;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -135,12 +173,61 @@
 			buildActionMask = 2147483647;
 			files = (
 				E34B26741DB4A9C9002F4598 /* LaunchScreen.storyboard in Resources */,
+				E3271C8F1DB7E37300F98EDD /* GoogleService-Info.plist in Resources */,
 				E34B26711DB4A9C9002F4598 /* Assets.xcassets in Resources */,
 				E34B266F1DB4A9C9002F4598 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3CBE76D0007659DB930DC02C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TalkerProject/Pods-TalkerProject-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		489443FFFAE655A0EE97AECB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TalkerProject/Pods-TalkerProject-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FD5F33A1E25C116E1F5D59EC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E34B26621DB4A9C9002F4598 /* Sources */ = {
@@ -268,9 +355,11 @@
 		};
 		E34B26791DB4A9C9002F4598 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1E8130DDFD9CA5358214EA1D /* Pods-TalkerProject.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_ENTITLEMENTS = TalkerProject/TalkerProject.entitlements;
+				DEVELOPMENT_TEAM = LEH8XEP9K4;
 				INFOPLIST_FILE = TalkerProject/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -282,9 +371,11 @@
 		};
 		E34B267A1DB4A9C9002F4598 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 693869846EF5DD8C9F71CECE /* Pods-TalkerProject.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_ENTITLEMENTS = TalkerProject/TalkerProject.entitlements;
+				DEVELOPMENT_TEAM = LEH8XEP9K4;
 				INFOPLIST_FILE = TalkerProject/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
