@@ -23,16 +23,16 @@ class LoginController: UIViewController {
     }()
     
     //the textfields inside the above container view
-    let emailTextField: UITextField = {
+    let nameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Email"
+        textField.placeholder = "Username"
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    let nameTextField: UITextField = {
+    let emailTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Username"
+        textField.placeholder = "Email"
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -76,8 +76,8 @@ class LoginController: UIViewController {
     }()
     
     var inputsViewContainerHeightAnchor : NSLayoutConstraint?
-    var nameTextFieldHeightAnchor : NSLayoutConstraint?
     var emailTextFieldHeightAnchor : NSLayoutConstraint?
+    var nameTextFieldHeightAnchor : NSLayoutConstraint?
     var pwTextFieldHeightAnchor : NSLayoutConstraint?
 
     
@@ -88,30 +88,51 @@ class LoginController: UIViewController {
         print(index)
         inputsViewContainerHeightAnchor?.constant = (index) == 0 ? 120 : 180
      
-        emailTextFieldHeightAnchor?.isActive = false
-        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: (index) == 0 ? 0 : 1/3)
-        emailTextFieldHeightAnchor?.isActive = true
+        nameTextFieldHeightAnchor?.isActive = false
+        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: (index) == 0 ? 0 : 1/3)
+        nameTextFieldHeightAnchor?.isActive = true
         
         if (index == 0) {
-            emailTextField.isHidden = true
+            nameTextField.isHidden = true
         }
         else {
-            emailTextField.isHidden = false
+            nameTextField.isHidden = false
         }
         
-        nameTextFieldHeightAnchor?.isActive = false
-        nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: (index) == 0 ? 1/2 : 1/3)
-        nameTextFieldHeightAnchor?.isActive = true
+        emailTextFieldHeightAnchor?.isActive = false
+        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: (index) == 0 ? 1/2 : 1/3)
+        emailTextFieldHeightAnchor?.isActive = true
         
         pwTextFieldHeightAnchor?.isActive = false
         pwTextFieldHeightAnchor = pwTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: (index) == 0 ? 1/2 : 1/3)
         pwTextFieldHeightAnchor?.isActive = true
         
 }
-    
+    func handleLogin() {
+        guard let email = emailTextField.text , let pw = pwTextField.text else {
+            print("Email and password is not valid")
+            return
+        }
+        FIRAuth.auth()?.signIn(withEmail: email, password: pw, completion: { (user, error) in
+            if (error != nil) {
+                print(error)
+                return
+            }
+            print("Sign in successfully")
+            self.dismiss(animated: true, completion: nil)
+        })
+    }
     
     func handleLoginRegister() {
-        guard let email = emailTextField.text , let pw = pwTextField.text, let name = nameTextField.text  else {
+        if (loginRegisterControl.index == 0) {
+            handleLogin()
+        }
+        else {
+            handleRegister()
+        }
+    }
+    func handleRegister() {
+        guard let name = nameTextField.text , let pw = pwTextField.text, let email = emailTextField.text  else {
             print("Email or password is not valid")
             return
         }
@@ -136,6 +157,8 @@ class LoginController: UIViewController {
                     return
                 }
                 print("Save user successfully into FirebaseDB")
+                self.dismiss(animated: true, completion: nil)
+                
             })
         })
     }
@@ -216,35 +239,35 @@ class LoginController: UIViewController {
         inputsViewContainerHeightAnchor = inputsViewContainer.heightAnchor.constraint(equalToConstant: 180)
         inputsViewContainerHeightAnchor?.isActive = true
         
-        inputsViewContainer.addSubview(emailTextField)
-        inputsViewContainer.addSubview(emailSeparator)
         inputsViewContainer.addSubview(nameTextField)
+        inputsViewContainer.addSubview(emailSeparator)
+        inputsViewContainer.addSubview(emailTextField)
         inputsViewContainer.addSubview(nameSeparator)
         inputsViewContainer.addSubview(pwTextField)
         
         //set constraint for emailTextField
-        emailTextField.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor, constant: 12).isActive = true
-        emailTextField.topAnchor.constraint(equalTo: inputsViewContainer.topAnchor).isActive = true
-        emailTextField.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
-        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: 1/3)
-        emailTextFieldHeightAnchor?.isActive = true
-        
-        //set constraint for phoneSeparator
-        emailSeparator.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor).isActive = true
-        emailSeparator.topAnchor.constraint(equalTo: emailTextField.bottomAnchor).isActive = true
-        emailSeparator.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
-        emailSeparator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
-        //set constraint for nameTextField
         nameTextField.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor, constant: 12).isActive = true
-        nameTextField.topAnchor.constraint(equalTo: emailSeparator.topAnchor).isActive = true
+        nameTextField.topAnchor.constraint(equalTo: inputsViewContainer.topAnchor).isActive = true
         nameTextField.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
         nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: 1/3)
         nameTextFieldHeightAnchor?.isActive = true
         
+        //set constraint for phoneSeparator
+        emailSeparator.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor).isActive = true
+        emailSeparator.topAnchor.constraint(equalTo: nameTextField.bottomAnchor).isActive = true
+        emailSeparator.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
+        emailSeparator.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+        //set constraint for nameTextField
+        emailTextField.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor, constant: 12).isActive = true
+        emailTextField.topAnchor.constraint(equalTo: emailSeparator.topAnchor).isActive = true
+        emailTextField.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
+        emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: 1/3)
+        emailTextFieldHeightAnchor?.isActive = true
+        
         //set constraint for userNameSeparator
         nameSeparator.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor).isActive = true
-        nameSeparator.topAnchor.constraint(equalTo: nameTextField.bottomAnchor).isActive = true
+        nameSeparator.topAnchor.constraint(equalTo: emailTextField.bottomAnchor).isActive = true
         nameSeparator.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
         nameSeparator.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
