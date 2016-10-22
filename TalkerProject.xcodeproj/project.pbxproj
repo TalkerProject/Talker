@@ -11,10 +11,13 @@
 		E3271C8D1DB5FEF700F98EDD /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3271C8C1DB5FEF700F98EDD /* LoginController.swift */; };
 		E3271C8F1DB7E37300F98EDD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3271C8E1DB7E37300F98EDD /* GoogleService-Info.plist */; };
 		E34B266A1DB4A9C9002F4598 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B26691DB4A9C9002F4598 /* AppDelegate.swift */; };
-		E34B266C1DB4A9C9002F4598 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B266B1DB4A9C9002F4598 /* ViewController.swift */; };
+		E34B266C1DB4A9C9002F4598 /* MessagesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B266B1DB4A9C9002F4598 /* MessagesController.swift */; };
 		E34B266F1DB4A9C9002F4598 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E34B266D1DB4A9C9002F4598 /* Main.storyboard */; };
 		E34B26711DB4A9C9002F4598 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E34B26701DB4A9C9002F4598 /* Assets.xcassets */; };
 		E34B26741DB4A9C9002F4598 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E34B26721DB4A9C9002F4598 /* LaunchScreen.storyboard */; };
+		E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B741DBB16D7000961DE /* NewMessageController.swift */; };
+		E3D64B791DBB519A000961DE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B781DBB519A000961DE /* User.swift */; };
+		E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B7C1DBB6519000961DE /* UserCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,11 +29,14 @@
 		E3271C901DB892C600F98EDD /* TalkerProject.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TalkerProject.entitlements; sourceTree = "<group>"; };
 		E34B26661DB4A9C9002F4598 /* TalkerProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TalkerProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34B26691DB4A9C9002F4598 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E34B266B1DB4A9C9002F4598 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		E34B266B1DB4A9C9002F4598 /* MessagesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesController.swift; sourceTree = "<group>"; };
 		E34B266E1DB4A9C9002F4598 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E34B26701DB4A9C9002F4598 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E34B26731DB4A9C9002F4598 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E34B26751DB4A9C9002F4598 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E3D64B741DBB16D7000961DE /* NewMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
+		E3D64B781DBB519A000961DE /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		E3D64B7C1DBB6519000961DE /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,13 +60,14 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		E3271C8B1DB5FED200F98EDD /* Controllers */ = {
+		E3271C8B1DB5FED200F98EDD /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				E34B266B1DB4A9C9002F4598 /* ViewController.swift */,
+				E34B266B1DB4A9C9002F4598 /* MessagesController.swift */,
 				E3271C8C1DB5FEF700F98EDD /* LoginController.swift */,
+				E3D64B741DBB16D7000961DE /* NewMessageController.swift */,
 			);
-			name = Controllers;
+			name = Controller;
 			sourceTree = "<group>";
 		};
 		E34B265D1DB4A9C9002F4598 = {
@@ -84,8 +91,10 @@
 		E34B26681DB4A9C9002F4598 /* TalkerProject */ = {
 			isa = PBXGroup;
 			children = (
+				E3D64B771DBB5162000961DE /* View */,
+				E3D64B761DBB515D000961DE /* Model */,
 				E3271C901DB892C600F98EDD /* TalkerProject.entitlements */,
-				E3271C8B1DB5FED200F98EDD /* Controllers */,
+				E3271C8B1DB5FED200F98EDD /* Controller */,
 				E34B26691DB4A9C9002F4598 /* AppDelegate.swift */,
 				E34B266D1DB4A9C9002F4598 /* Main.storyboard */,
 				E34B26701DB4A9C9002F4598 /* Assets.xcassets */,
@@ -94,6 +103,22 @@
 				E34B26751DB4A9C9002F4598 /* Info.plist */,
 			);
 			path = TalkerProject;
+			sourceTree = "<group>";
+		};
+		E3D64B761DBB515D000961DE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E3D64B781DBB519A000961DE /* User.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		E3D64B771DBB5162000961DE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E3D64B7C1DBB6519000961DE /* UserCell.swift */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 		F5D00A9B719A6FF7468969FD /* Frameworks */ = {
@@ -234,8 +259,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E34B266C1DB4A9C9002F4598 /* ViewController.swift in Sources */,
+				E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */,
+				E34B266C1DB4A9C9002F4598 /* MessagesController.swift in Sources */,
+				E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */,
 				E3271C8D1DB5FEF700F98EDD /* LoginController.swift in Sources */,
+				E3D64B791DBB519A000961DE /* User.swift in Sources */,
 				E34B266A1DB4A9C9002F4598 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
