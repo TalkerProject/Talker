@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 class MessagesController: UITableViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -20,20 +20,33 @@ class MessagesController: UITableViewController {
     }
     
     func setupUI() {
+        let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
+        let leftBarButtonImage = UIImage(named: "setting")?.withRenderingMode(.alwaysOriginal)
+        
+        let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
+                              NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
+        
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
-        let rightBarButtonImage = UIImage(named: "new_message")
+        self.navigationController?.navigationBar.titleTextAttributes = textAttributes
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleNewMessage))
         //        self.navigationItem.rightBarButtonItem?.tintColor = UIColor.white
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftBarButtonImage,style: .plain, target: self, action: #selector(handleSetting))
+        
     }
-
+    
+    func handleSetting() {
+        let settingController = SettingController()
+        let nav = UINavigationController(rootViewController: settingController)
+        present(nav, animated: true, completion: nil)
+    }
+    
     func checkIfUserIsLoggedIn() {
         if FIRAuth.auth()?.currentUser?.uid == nil {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Login", style: .plain, target: self, action: #selector(handleLogout))
-            perform(#selector(handleLogout), with: nil, afterDelay: 0)
+            perform(#selector(handleAutomaticallyLogout), with: nil, afterDelay: 0)
         }
         else {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+            
             let uid = FIRAuth.auth()?.currentUser?.uid
             FIRDatabase.database().reference().child("users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String : AnyObject] {
@@ -49,9 +62,11 @@ class MessagesController: UITableViewController {
         present(nav, animated: true, completion: nil)
         
     }
-    func handleLogout() {
+    
+    //call this function when user is not logged in
+    func handleAutomaticallyLogout() {
         do {
-           try FIRAuth.auth()?.signOut()
+            try FIRAuth.auth()?.signOut()
             print("Logout successfully")
         } catch let logoutError {
             print(logoutError)

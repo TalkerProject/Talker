@@ -18,6 +18,7 @@
 		E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B741DBB16D7000961DE /* NewMessageController.swift */; };
 		E3D64B791DBB519A000961DE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B781DBB519A000961DE /* User.swift */; };
 		E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B7C1DBB6519000961DE /* UserCell.swift */; };
+		E3D64B851DBD31EB000961DE /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B841DBD31EB000961DE /* SettingController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		E3D64B741DBB16D7000961DE /* NewMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		E3D64B781DBB519A000961DE /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E3D64B7C1DBB6519000961DE /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		E3D64B841DBD31EB000961DE /* SettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				E34B266B1DB4A9C9002F4598 /* MessagesController.swift */,
 				E3271C8C1DB5FEF700F98EDD /* LoginController.swift */,
 				E3D64B741DBB16D7000961DE /* NewMessageController.swift */,
+				E3D64B841DBD31EB000961DE /* SettingController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				E3271C8D1DB5FEF700F98EDD /* LoginController.swift in Sources */,
 				E3D64B791DBB519A000961DE /* User.swift in Sources */,
 				E34B266A1DB4A9C9002F4598 /* AppDelegate.swift in Sources */,
+				E3D64B851DBD31EB000961DE /* SettingController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

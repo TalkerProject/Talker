@@ -13,7 +13,7 @@ class UserCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
     }
     
 }

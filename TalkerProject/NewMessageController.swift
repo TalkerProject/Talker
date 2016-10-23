@@ -16,10 +16,17 @@ class NewMessageController: UITableViewController {
         super.viewDidLoad()
         setupUI()
         fetchUsersMessages()
-        tableView.register(<#T##cellClass: AnyClass?##AnyClass?#>, forCellReuseIdentifier: <#T##String#>)
+        tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
     }
 
     func setupUI() {
+        let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
+                              NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
+        
+        self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
+        self.navigationController?.navigationBar.titleTextAttributes = textAttributes
+        self.navigationItem.title = "Compose Message"
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
     }
     
@@ -48,7 +55,9 @@ class NewMessageController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath )
+        
         let user = users[indexPath.row]
         let name = user.name
         let email = user.email
