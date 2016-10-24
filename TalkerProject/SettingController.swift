@@ -10,11 +10,12 @@ import UIKit
 import Firebase
 class SettingController: UIViewController {
     
-    let profileImageView: UIImageView = {
+    lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = UIColor.red
         imageView.translatesAutoresizingMaskIntoConstraints = false
-
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfilePicture)))
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -25,36 +26,40 @@ class SettingController: UIViewController {
         return table
     }()
     
-    func setupProfileImageViewConstraints() {
-        //also needs x,y, width and height for autolayout
-        profileImageView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 30).isActive = true
-        profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-    }
-    
-    func setupTableViewConstraints() {
-//        tableView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor).isActive = true
-//        tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//        tableView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-//        tableView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height).isActive = true
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
-//        view.addSubview(profileImageView)
+        view.addSubview(profileImageView)
 //        view.addSubview(tableView)
 //        tableView.delegate = self
 //        tableView.dataSource = self
-//        setupProfileImageViewConstraints()
+        setupProfileImageViewConstraints()
 //        setupTableViewConstraints()
         
     }
     
+    
+}
+
+extension SettingController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func handleSelectProfilePicture() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        print("Choose picture")
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        print("Did pick picture")
+    }
+    
     func setupUI() {
-        view.backgroundColor = UIColor(r: 244, g: 66, b: 66)
+        view.backgroundColor = UIColor.white
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
         
@@ -90,4 +95,19 @@ class SettingController: UIViewController {
         present(loginController, animated: true, completion: nil)
     }
     
+    func setupProfileImageViewConstraints() {
+        //also needs x,y, width and height for autolayout
+        profileImageView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 30).isActive = true
+        profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+    }
+    
+    func setupTableViewConstraints() {
+        //        tableView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor).isActive = true
+        //        tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        //        tableView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        //        tableView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height).isActive = true
+    }
+
 }
