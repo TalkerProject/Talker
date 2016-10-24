@@ -10,7 +10,7 @@ Time spent: xx hours spent in total
 
 The following **required** functionality is completed:
 
-- [] User can register using email or mobile phone and password
+- [x] User can register using email and username and password
 - [] User can update profile (name, avatar, occupation, etc...)
 - [] User sees loading state while fetching information
 - [] User sees an error message when there is a network error.
@@ -26,7 +26,6 @@ The following **optional** features are implemented:
 - [] User can send voice
 - [] User can send stickers
 - [] User can find other users nearby
-
 
 
 ## Video Walkthrough
