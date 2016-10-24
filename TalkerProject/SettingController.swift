@@ -12,10 +12,14 @@ class SettingController: UIViewController {
     
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = UIColor.red
+        
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfilePicture)))
         imageView.isUserInteractionEnabled = true
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = true
+        imageView.image = UIImage(named: "default_avatar")
+        
         return imageView
     }()
     
@@ -47,16 +51,63 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
     func handleSelectProfilePicture() {
         let picker = UIImagePickerController()
         picker.delegate = self
+        picker.allowsEditing = true
         present(picker, animated: true, completion: nil)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        print("Choose picture")
+        dismiss(animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        print("Did pick picture")
+        
+        var selectedImageFromPicker: UIImage?
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            selectedImageFromPicker = editedImage
+        }
+        else {
+            if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+                selectedImageFromPicker = originalImage
+            }
+        }
+        
+        if let selectedImage = selectedImageFromPicker  {
+            profileImageView.image = selectedImage
+            
+            //this blog of code below is used for uploading the image to Firebase's storage then update to the user's database
+            let uniqueImageName = NSUUID().uuidString
+            let storageRef = FIRStorage.storage().reference().child("profile_images").child("\(uniqueImageName).png")
+            if let uploadData = UIImagePNGRepresentation(selectedImage) {
+                storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                    if error != nil {
+                        print(error)
+                        return
+                    }
+                    print("Upload to storage successfully")
+                    if let profileImageURL = metadata?.downloadURL()?.absoluteString {
+                        
+                        let uid = FIRAuth.auth()?.currentUser?.uid
+                        let databaseRef = FIRDatabase.database().reference()
+                        let currentUser = databaseRef.child("users").child(uid!)
+                        let values = ["profileImageURL" : profileImageURL]
+                        currentUser.updateChildValues(values, withCompletionBlock: { (error, ref) in
+                            if error != nil {
+                                print(error)
+                                return
+                            }
+                        })
+
+                    }
+                })
+               
+            }
+        }
+        dismiss(animated: true, completion: nil)
+        
+        
     }
+    
+    
     
     func setupUI() {
         view.backgroundColor = UIColor.white

@@ -10,5 +10,6 @@ target 'TalkerProject' do
   pod ‘Firebase/Auth’
   pod ‘Firebase/Storage’
   pod 'BetterSegmentedControl', '~> 0.5'
+  pod 'AFNetworking', '~> 3.0'
 
 end

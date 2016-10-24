@@ -8,10 +8,12 @@
 
 import UIKit
 import Firebase
+import AFNetworking
 
 class NewMessageController: UITableViewController {
     var users = [User]()
     let cellID = "newMessageCell"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -57,10 +59,18 @@ class NewMessageController: UITableViewController {
         
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath )
-        
         let user = users[indexPath.row]
         let name = user.name
         let email = user.email
+        cell.imageView?.contentMode = .scaleAspectFill
+        cell.imageView?.layer.cornerRadius = 20
+        cell.imageView?.layer.masksToBounds = true
+        cell.imageView?.image = UIImage(named: "default_avatar")
+        
+        
+        if let profileImageURL = user.profileImageURL {
+            cell.imageView?.setImageWith(URL(string: profileImageURL)!)
+        }
         
         cell.textLabel?.text = name
         cell.detailTextLabel?.text = email
