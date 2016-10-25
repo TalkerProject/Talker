@@ -213,6 +213,7 @@ class LoginController: UIViewController {
     func setupAppIconView() {
         //needs x, y , height, width
         appIconView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        appIconView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
         appIconView.bottomAnchor.constraint(equalTo:  loginRegisterControl.topAnchor, constant: -12).isActive = true
         appIconView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         appIconView.heightAnchor.constraint(equalToConstant: 150).isActive = true
@@ -307,3 +308,5 @@ extension UIViewController {
         view.endEditing(true)
     }
 }
+
+

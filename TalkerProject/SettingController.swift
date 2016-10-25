@@ -8,18 +8,21 @@
 
 import UIKit
 import Firebase
+import AFNetworking
 class SettingController: UIViewController {
+    let uid = FIRAuth.auth()?.currentUser?.uid
+    let databaseRef = FIRDatabase.database().reference()
+    let currentUser = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
     
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
-        
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfilePicture)))
         imageView.isUserInteractionEnabled = true
-        imageView.layer.cornerRadius = 20
+        imageView.layer.cornerRadius = 75
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(named: "default_avatar")
-        
         return imageView
     }()
     
@@ -32,7 +35,6 @@ class SettingController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
         view.addSubview(profileImageView)
 //        view.addSubview(tableView)
@@ -86,9 +88,8 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
                     print("Upload to storage successfully")
                     if let profileImageURL = metadata?.downloadURL()?.absoluteString {
                         
-                        let uid = FIRAuth.auth()?.currentUser?.uid
-                        let databaseRef = FIRDatabase.database().reference()
-                        let currentUser = databaseRef.child("users").child(uid!)
+                        
+                        let currentUser = self.databaseRef.child("users").child(self.uid!)
                         let values = ["profileImageURL" : profileImageURL]
                         currentUser.updateChildValues(values, withCompletionBlock: { (error, ref) in
                             if error != nil {
@@ -111,6 +112,19 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
     
     func setupUI() {
         view.backgroundColor = UIColor.white
+        
+        //update the image for that shit
+        self.currentUser.observeSingleEvent(of: .value, with: { (snapshot) in
+            //get user value 
+            let currentUserValue = snapshot.value as? NSDictionary
+            if let profilePicture = currentUserValue?["profileImageURL"] as? String {
+                self.profileImageView.setImageWith(URL(string:profilePicture)!)
+            }
+            
+            }) { (error) in
+                print(error)
+        }
+        
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
         
