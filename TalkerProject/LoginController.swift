@@ -12,6 +12,7 @@ import BetterSegmentedControl
 
 class LoginController: UIViewController {
     
+    var messageController : MessagesController?
     //the container view to input email and password to login
     let inputsViewContainer: UIView = {
         let view = UIView()
@@ -157,6 +158,7 @@ class LoginController: UIViewController {
                     return
                 }
                 print("Save user successfully into FirebaseDB")
+                self.messageController?.fetchUser()
                 self.dismiss(animated: true, completion: nil)
                 
             })
@@ -213,7 +215,6 @@ class LoginController: UIViewController {
     func setupAppIconView() {
         //needs x, y , height, width
         appIconView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        appIconView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
         appIconView.bottomAnchor.constraint(equalTo:  loginRegisterControl.topAnchor, constant: -12).isActive = true
         appIconView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         appIconView.heightAnchor.constraint(equalToConstant: 150).isActive = true
@@ -237,7 +238,7 @@ class LoginController: UIViewController {
         inputsViewContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         inputsViewContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         inputsViewContainer.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
-        inputsViewContainerHeightAnchor = inputsViewContainer.heightAnchor.constraint(equalToConstant: 180)
+        inputsViewContainerHeightAnchor = inputsViewContainer.heightAnchor.constraint(equalToConstant: 150)
         inputsViewContainerHeightAnchor?.isActive = true
         
         inputsViewContainer.addSubview(nameTextField)

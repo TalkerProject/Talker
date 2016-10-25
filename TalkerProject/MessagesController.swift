@@ -46,21 +46,25 @@ class MessagesController: UITableViewController {
             perform(#selector(handleAutomaticallyLogout), with: nil, afterDelay: 0)
         }
         else {
-            
-            let uid = FIRAuth.auth()?.currentUser?.uid
-            FIRDatabase.database().reference().child("users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String : AnyObject] {
-                    self.navigationItem.title = dictionary["name"] as? String
-                }
-            })
+            fetchUser()
         }
+    }
+    
+    func fetchUser() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            if let dictionary = snapshot.value as? [String : AnyObject] {
+                self.navigationItem.title = dictionary["name"] as? String
+            }
+        })
     }
     
     func handleNewMessage() {
         let newMessageController = NewMessageController()
         let nav = UINavigationController(rootViewController: newMessageController)
         present(nav, animated: true, completion: nil)
-        
     }
     
     //call this function when user is not logged in
@@ -72,6 +76,7 @@ class MessagesController: UITableViewController {
             print(logoutError)
         }
         let loginController = LoginController()
+        loginController.messageController = self
         present(loginController, animated: true, completion: nil)
     }
     
