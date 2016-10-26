@@ -78,8 +78,8 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
             
             //this blog of code below is used for uploading the image to Firebase's storage then update to the user's database
             let uniqueImageName = NSUUID().uuidString
-            let storageRef = FIRStorage.storage().reference().child("profile_images").child("\(uniqueImageName).png")
-            if let uploadData = UIImagePNGRepresentation(selectedImage) {
+            let storageRef = FIRStorage.storage().reference().child("profile_images").child("\(uniqueImageName).jpg")
+            if let uploadData = UIImageJPEGRepresentation(selectedImage,0.1) {
                 storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                     if error != nil {
                         print(error)
@@ -87,8 +87,6 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
                     }
                     print("Upload to storage successfully")
                     if let profileImageURL = metadata?.downloadURL()?.absoluteString {
-                        
-                        
                         let currentUser = self.databaseRef.child("users").child(self.uid!)
                         let values = ["profileImageURL" : profileImageURL]
                         currentUser.updateChildValues(values, withCompletionBlock: { (error, ref) in

@@ -9,7 +9,8 @@
 import UIKit
 import Firebase
 class MessagesController: UITableViewController {
-    
+    let profileImageViewNavBar = UIImageView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -56,9 +57,54 @@ class MessagesController: UITableViewController {
         }
         FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             if let dictionary = snapshot.value as? [String : AnyObject] {
-                self.navigationItem.title = dictionary["name"] as? String
+                let user = User()
+                user.setValuesForKeys(dictionary)
+                self.setUpNavBar(user: user)
             }
         })
+    }
+    
+    //this function is to setup the navbar UI after fetching user
+    func setUpNavBar(user: User) {
+        //self.navigationItem.title = user.name
+        let titleView = UIView()
+        profileImageViewNavBar.translatesAutoresizingMaskIntoConstraints = false
+        profileImageViewNavBar.layer.cornerRadius = 20
+        profileImageViewNavBar.layer.masksToBounds = true
+        profileImageViewNavBar.contentMode = .scaleAspectFill
+        if let profileImageURL = user.profileImageURL {
+            UIView.animate(withDuration: 1, animations: {
+                self.profileImageViewNavBar.setImageWith(URL(string: profileImageURL)!)
+            })
+        }
+        else {
+            UIView.animate(withDuration: 1, animations: {
+                self.profileImageViewNavBar.image = UIImage(named: "default_avatar")
+            })
+        }
+        titleView.addSubview(profileImageViewNavBar)
+        var timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(navBarAnimation), userInfo: nil, repeats: true)
+        
+//        nameLabel.frame = CGRect(x: 0, y: 0, width: CGFloat, height: CGFloat)
+        profileImageViewNavBar.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
+        profileImageViewNavBar.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
+        profileImageViewNavBar.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        profileImageViewNavBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        self.navigationItem.titleView = titleView
+    }
+    
+    func navBarAnimation() {
+        if (profileImageViewNavBar.alpha == 0) {
+            UIView.animate(withDuration: 1, animations: {
+                self.profileImageViewNavBar.alpha = 1
+            })
+        }
+        else {
+            UIView.animate(withDuration: 1, animations: {
+                self.profileImageViewNavBar.alpha = 0
+            })
+        }
     }
     
     func handleNewMessage() {
