@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 class MessagesController: UITableViewController {
     let profileImageViewNavBar = UIImageView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,49 +68,51 @@ class MessagesController: UITableViewController {
     func setUpNavBar(user: User) {
         //self.navigationItem.title = user.name
         let titleView = UIView()
-        profileImageViewNavBar.translatesAutoresizingMaskIntoConstraints = false
-        profileImageViewNavBar.layer.cornerRadius = 20
-        profileImageViewNavBar.layer.masksToBounds = true
-        profileImageViewNavBar.contentMode = .scaleAspectFill
-        if let profileImageURL = user.profileImageURL {
-            UIView.animate(withDuration: 1, animations: {
-                self.profileImageViewNavBar.setImageWith(URL(string: profileImageURL)!)
-            })
-        }
-        else {
-            UIView.animate(withDuration: 1, animations: {
-                self.profileImageViewNavBar.image = UIImage(named: "default_avatar")
-            })
-        }
-        titleView.addSubview(profileImageViewNavBar)
-        var timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(navBarAnimation), userInfo: nil, repeats: true)
+        let nameLabel = UILabel()
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleView.frame = CGRect(x: 0, y: 0, width: 200, height: 40)
+//        profileImageViewNavBar.translatesAutoresizingMaskIntoConstraints = false
+//        profileImageViewNavBar.layer.cornerRadius = 20
+//        profileImageViewNavBar.layer.masksToBounds = true
+//        profileImageViewNavBar.contentMode = .scaleAspectFill
+//        if let profileImageURL = user.profileImageURL {
+//            self.profileImageViewNavBar.setImageWith(URL(string: profileImageURL)!)
+//        }
+//        else {
+//            self.profileImageViewNavBar.image = UIImage(named: "default_avatar")
+//        }
+//        titleView.addSubview(profileImageViewNavBar)
+//        
+//        profileImageViewNavBar.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
+//        profileImageViewNavBar.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
+//        profileImageViewNavBar.widthAnchor.constraint(equalToConstant: 40).isActive = true
+//        profileImageViewNavBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        let myMutableString = NSMutableAttributedString(string: user.name!, attributes: [NSForegroundColorAttributeName: UIColor.white,
+            NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)!])
+        nameLabel.attributedText = myMutableString
+        nameLabel.textAlignment = .center
         
-//        nameLabel.frame = CGRect(x: 0, y: 0, width: CGFloat, height: CGFloat)
-        profileImageViewNavBar.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
-        profileImageViewNavBar.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
-        profileImageViewNavBar.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        profileImageViewNavBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        titleView.addSubview(nameLabel)
         
+        nameLabel.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
+        nameLabel.rightAnchor.constraint(equalTo: titleView.rightAnchor).isActive = true
+        nameLabel.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
+        nameLabel.heightAnchor.constraint(equalTo: titleView.heightAnchor).isActive = true
+
         self.navigationItem.titleView = titleView
+        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
+
     }
     
-    func navBarAnimation() {
-        if (profileImageViewNavBar.alpha == 0) {
-            UIView.animate(withDuration: 1, animations: {
-                self.profileImageViewNavBar.alpha = 1
-            })
-        }
-        else {
-            UIView.animate(withDuration: 1, animations: {
-                self.profileImageViewNavBar.alpha = 0
-            })
-        }
+    func showChatController() {
+        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        self.navigationController?.pushViewController(chatLogController, animated: true)
     }
     
     func handleNewMessage() {
         let newMessageController = NewMessageController()
         let nav = UINavigationController(rootViewController: newMessageController)
-        present(nav, animated: true, completion: nil)
+        present(nav, animated: true, completion:  nil)
     }
     
     //call this function when user is not logged in

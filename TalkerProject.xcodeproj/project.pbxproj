@@ -19,6 +19,7 @@
 		E3D64B791DBB519A000961DE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B781DBB519A000961DE /* User.swift */; };
 		E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B7C1DBB6519000961DE /* UserCell.swift */; };
 		E3D64B851DBD31EB000961DE /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B841DBD31EB000961DE /* SettingController.swift */; };
+		E3E23C661DC1DA8B00C6AE8C /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E23C651DC1DA8B00C6AE8C /* ChatLogController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		E3D64B781DBB519A000961DE /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E3D64B7C1DBB6519000961DE /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		E3D64B841DBD31EB000961DE /* SettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
+		E3E23C651DC1DA8B00C6AE8C /* ChatLogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				E3271C8C1DB5FEF700F98EDD /* LoginController.swift */,
 				E3D64B741DBB16D7000961DE /* NewMessageController.swift */,
 				E3D64B841DBD31EB000961DE /* SettingController.swift */,
+				E3E23C651DC1DA8B00C6AE8C /* ChatLogController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3E23C661DC1DA8B00C6AE8C /* ChatLogController.swift in Sources */,
 				E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */,
 				E34B266C1DB4A9C9002F4598 /* MessagesController.swift in Sources */,
 				E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */,

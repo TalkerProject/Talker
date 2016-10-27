@@ -193,7 +193,7 @@ class LoginController: UIViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        view.backgroundColor = UIColor(r: 244, g: 66, b: 66)
+        view.backgroundColor = UIColor(r: 69, g: 72, b: 76)
 
         view.addSubview(inputsViewContainer)
         view.addSubview(loginRegisterButton)
