@@ -18,6 +18,14 @@ class MessagesController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         setupUI()
         checkIfUserIsLoggedIn()
+        observeMessages()
+    }
+    
+    func observeMessages() {
+        let ref = FIRDatabase.database().reference().child("messages")
+        ref.observeSingleEvent(of: .value) { (snapshot) in
+            print(snapshot.value)
+        }
     }
     
     func setupUI() {
@@ -33,7 +41,6 @@ class MessagesController: UITableViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleNewMessage))
         //        self.navigationItem.rightBarButtonItem?.tintColor = UIColor.white
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftBarButtonImage,style: .plain, target: self, action: #selector(handleSetting))
-        
     }
     
     func handleSetting() {
@@ -100,17 +107,17 @@ class MessagesController: UITableViewController {
         nameLabel.heightAnchor.constraint(equalTo: titleView.heightAnchor).isActive = true
 
         self.navigationItem.titleView = titleView
-        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
-
     }
     
-    func showChatController() {
+    func showChatController(user : User) {
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        chatLogController.user = user
         self.navigationController?.pushViewController(chatLogController, animated: true)
     }
     
     func handleNewMessage() {
         let newMessageController = NewMessageController()
+        newMessageController.messagesController = self
         let nav = UINavigationController(rootViewController: newMessageController)
         present(nav, animated: true, completion:  nil)
     }

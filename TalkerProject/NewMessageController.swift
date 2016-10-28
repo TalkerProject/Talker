@@ -48,7 +48,7 @@ class NewMessageController: UITableViewController {
                 //have to match the properties of the class exactly with the keys of dictionary, otherwise the app will crash.
                 user.setValuesForKeys(dictionary)
                 self.users.append(user)
-                
+                user.id = snapshot.key
                 //if app crash. Lets use dispatch_async
                 self.tableView.reloadData()
             }
@@ -60,7 +60,6 @@ class NewMessageController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath ) as! UserCell
         let user = users[indexPath.row]
@@ -79,6 +78,13 @@ class NewMessageController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 56
+    }
+    
+    var messagesController : MessagesController?
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismiss(animated: true, completion: nil)
+        let user = users[indexPath.row]
+        self.messagesController?.showChatController(user: user)
     }
 
 }
