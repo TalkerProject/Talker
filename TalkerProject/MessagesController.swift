@@ -10,22 +10,58 @@ import UIKit
 import Firebase
 class MessagesController: UITableViewController {
     let profileImageViewNavBar = UIImageView()
-    
+    var messagesDict = [String : Message]()
+
+    var messages = [Message]()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         setupUI()
+        self.messages.removeAll()
         checkIfUserIsLoggedIn()
         observeMessages()
+        tableView.register(UserCell.self, forCellReuseIdentifier: "cellID")
     }
     
     func observeMessages() {
         let ref = FIRDatabase.database().reference().child("messages")
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            print(snapshot.value)
-        }
+        
+        ref.observe(.childAdded, with: { (snapshot) in
+            if let dictionary = snapshot.value as? [String : AnyObject] {
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+                if let toID = message.toID {
+                    self.messagesDict[toID] = message
+                    
+                    self.messages = Array(self.messagesDict.values)
+                    
+                    self.messages.sort(by: { (message1, message2) -> Bool in
+                        return (message1.timeStamp?.intValue)! > (message2.timeStamp?.intValue)!
+                    })
+                    
+                }
+                DispatchQueue.main.async(execute: {
+                    self.tableView.reloadData()
+                })
+                
+            }
+            }, withCancel: nil)
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellID", for: indexPath) as! UserCell
+        cell.message = messages[indexPath.row]
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 72
     }
     
     func setupUI() {
@@ -78,24 +114,8 @@ class MessagesController: UITableViewController {
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         titleView.frame = CGRect(x: 0, y: 0, width: 200, height: 40)
-//        profileImageViewNavBar.translatesAutoresizingMaskIntoConstraints = false
-//        profileImageViewNavBar.layer.cornerRadius = 20
-//        profileImageViewNavBar.layer.masksToBounds = true
-//        profileImageViewNavBar.contentMode = .scaleAspectFill
-//        if let profileImageURL = user.profileImageURL {
-//            self.profileImageViewNavBar.setImageWith(URL(string: profileImageURL)!)
-//        }
-//        else {
-//            self.profileImageViewNavBar.image = UIImage(named: "default_avatar")
-//        }
-//        titleView.addSubview(profileImageViewNavBar)
-//        
-//        profileImageViewNavBar.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
-//        profileImageViewNavBar.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
-//        profileImageViewNavBar.widthAnchor.constraint(equalToConstant: 40).isActive = true
-//        profileImageViewNavBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
         let myMutableString = NSMutableAttributedString(string: user.name!, attributes: [NSForegroundColorAttributeName: UIColor.white,
-            NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)!])
+                                                                                         NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)!])
         nameLabel.attributedText = myMutableString
         nameLabel.textAlignment = .center
         
@@ -105,7 +125,7 @@ class MessagesController: UITableViewController {
         nameLabel.rightAnchor.constraint(equalTo: titleView.rightAnchor).isActive = true
         nameLabel.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
         nameLabel.heightAnchor.constraint(equalTo: titleView.heightAnchor).isActive = true
-
+        
         self.navigationItem.titleView = titleView
     }
     

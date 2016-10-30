@@ -45,12 +45,17 @@ class NewMessageController: UITableViewController {
             
             if let dictionary = snapshot.value as? [String : AnyObject] {
                 let user = User()
+                
                 //have to match the properties of the class exactly with the keys of dictionary, otherwise the app will crash.
                 user.setValuesForKeys(dictionary)
                 self.users.append(user)
                 user.id = snapshot.key
-                //if app crash. Lets use dispatch_async
-                self.tableView.reloadData()
+                
+                //if app crashes. Lets use dispatch_async
+                DispatchQueue.main.async(execute: { 
+                    self.tableView.reloadData()
+
+                })
             }
             }, withCancel: nil)
     }

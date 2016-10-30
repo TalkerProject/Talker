@@ -7,8 +7,28 @@
 //
 
 import UIKit
+import Firebase
 
 class UserCell: UITableViewCell {
+    var message : Message? {
+        didSet {
+            if let toID = message?.toID {
+                let ref = FIRDatabase.database().reference().child("users").child(toID)
+                ref.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let dictionary = snapshot.value as? [String : AnyObject] {
+                        self.textLabel?.text = dictionary["name"] as? String
+                        self.detailTextLabel?.text = self.message?.text
+                        if let profileImageURL = dictionary["profileImageURL"] as? String {
+                            self.profileImageView.setImageWith(URL(string: profileImageURL)!)
+                        }
+                        else {
+                            self.profileImageView.image = UIImage(named: "default_avatar")
+                        }
+                    }
+                    }, withCancel: nil)
+            }
+        }
+    }
     let profileImageView : UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "default_avatar")

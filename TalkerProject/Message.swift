@@ -8,9 +8,9 @@
 
 import UIKit
 
-class Message : AnyObject {
-    var timeStamp : NSNumber?
-    var toID : String?
+class Message : NSObject {
     var fromID : String?
     var text : String?
+    var timeStamp : NSNumber?
+    var toID : String?
 }
