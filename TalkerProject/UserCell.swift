@@ -24,11 +24,22 @@ class UserCell: UITableViewCell {
                         else {
                             self.profileImageView.image = UIImage(named: "default_avatar")
                         }
+                        
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "HH:mm:ss a"
+                        if let seconds = self.message?.timeStamp?.doubleValue {
+                            print("Seconds +" + "\(seconds)")
+                            let date = NSDate(timeIntervalSince1970: seconds)
+                            print("date +" + "\(date)")
+                            self.timeLabel.text = formatter.string(from: date as Date)
+                        }
                     }
+                    
                     }, withCancel: nil)
             }
         }
     }
+    
     let profileImageView : UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "default_avatar")
@@ -37,6 +48,15 @@ class UserCell: UITableViewCell {
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
         return imageView
+    }()
+    
+    let timeLabel : UILabel = {
+        let label = UILabel()
+        label.text = "HH:MM:SS"
+        label.textColor = UIColor.darkGray
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     override func layoutSubviews() {
@@ -52,11 +72,19 @@ class UserCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         addSubview(profileImageView)
+        addSubview(timeLabel)
         
+        //x,y, width, height for constraints
         profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        //x,y, width, heght for constraints
+        timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 16).isActive = true
+        timeLabel.heightAnchor.constraint(equalTo: self.textLabel!.heightAnchor).isActive = true
+        timeLabel.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
     }
     
 }
