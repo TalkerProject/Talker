@@ -19,35 +19,38 @@ class MessagesController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         setupUI()
-        self.messages.removeAll()
         checkIfUserIsLoggedIn()
-        observeMessages()
+        observeUserMessages()
         tableView.register(UserCell.self, forCellReuseIdentifier: "cellID")
     }
     
-    func observeMessages() {
-        let ref = FIRDatabase.database().reference().child("messages")
-        
+    func observeUserMessages() {
+        guard let userID = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+        let ref = FIRDatabase.database().reference().child("user-messages").child(userID)
         ref.observe(.childAdded, with: { (snapshot) in
-            if let dictionary = snapshot.value as? [String : AnyObject] {
-                let message = Message()
-                message.setValuesForKeys(dictionary)
-                if let toID = message.toID {
-                    self.messagesDict[toID] = message
-                    
-                    self.messages = Array(self.messagesDict.values)
-                    
-                    self.messages.sort(by: { (message1, message2) -> Bool in
-                        return (message1.timeStamp?.intValue)! > (message2.timeStamp?.intValue)!
-                    })
-                    
+            let messageID = snapshot.key
+            let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
+            messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String : AnyObject] {
+                    let message = Message()
+                    message.setValuesForKeys(dictionary)
+                    if let toID = message.toID {
+                        self.messagesDict[toID] = message
+                        self.messages = Array(self.messagesDict.values)
+                        self.messages.sort(by: { (message1, message2) -> Bool in
+                            return (message1.timeStamp?.intValue)! > (message2.timeStamp?.intValue)!
+                        })
+                    }
                 }
-                DispatchQueue.main.async(execute: {
+                DispatchQueue.main.async(execute: { 
                     self.tableView.reloadData()
                 })
-                
-            }
-            }, withCancel: nil)
+            })
+            }) { (error) in
+                print(error)
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -110,6 +113,9 @@ class MessagesController: UITableViewController {
     //this function is to setup the navbar UI after fetching user
     func setUpNavBar(user: User) {
         //self.navigationItem.title = user.name
+        self.messages.removeAll()
+        self.messagesDict.removeAll()
+        self.tableView.reloadData()
         let titleView = UIView()
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false

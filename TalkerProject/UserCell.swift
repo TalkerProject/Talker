@@ -12,34 +12,43 @@ import Firebase
 class UserCell: UITableViewCell {
     var message : Message? {
         didSet {
-            if let toID = message?.toID {
-                let ref = FIRDatabase.database().reference().child("users").child(toID)
-                ref.observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let dictionary = snapshot.value as? [String : AnyObject] {
-                        self.textLabel?.text = dictionary["name"] as? String
-                        self.detailTextLabel?.text = self.message?.text
-                        if let profileImageURL = dictionary["profileImageURL"] as? String {
-                            self.profileImageView.setImageWith(URL(string: profileImageURL)!)
-                        }
-                        else {
-                            self.profileImageView.image = UIImage(named: "default_avatar")
-                        }
-                        
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "HH:mm:ss a"
-                        if let seconds = self.message?.timeStamp?.doubleValue {
-                            print("Seconds +" + "\(seconds)")
-                            let date = NSDate(timeIntervalSince1970: seconds)
-                            print("date +" + "\(date)")
-                            self.timeLabel.text = formatter.string(from: date as Date)
-                        }
-                    }
-                    
-                    }, withCancel: nil)
-            }
+           setupUI()
         }
     }
     
+    func setupUI() {
+        var chatID : String?
+        if message?.toID == FIRAuth.auth()?.currentUser?.uid {
+            chatID = self.message!.fromID
+        }
+        else {
+            chatID = self.message!.toID
+        }
+        
+        if let ID = chatID {
+            let ref = FIRDatabase.database().reference().child("users").child(ID)
+            ref.observeSingleEvent(of: .value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String : AnyObject] {
+                    self.textLabel?.text = dictionary["name"] as? String
+                    self.detailTextLabel?.text = self.message?.text
+                    if let profileImageURL = dictionary["profileImageURL"] as? String {
+                        self.profileImageView.setImageWith(URL(string: profileImageURL)!)
+                    }
+                    else {
+                        self.profileImageView.image = UIImage(named: "default_avatar")
+                    }
+                    
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "HH:mm:ss a"
+                    if let seconds = self.message?.timeStamp?.doubleValue {
+                        let date = NSDate(timeIntervalSince1970: seconds)
+                        self.timeLabel.text = formatter.string(from: date as Date)
+                    }
+                }
+                
+                }, withCancel: nil)
+        }
+    }
     let profileImageView : UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "default_avatar")
@@ -52,7 +61,6 @@ class UserCell: UITableViewCell {
     
     let timeLabel : UILabel = {
         let label = UILabel()
-        label.text = "HH:MM:SS"
         label.textColor = UIColor.darkGray
         label.font = UIFont.systemFont(ofSize: 13)
         label.translatesAutoresizingMaskIntoConstraints = false

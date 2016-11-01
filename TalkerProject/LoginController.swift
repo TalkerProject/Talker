@@ -86,7 +86,6 @@ class LoginController: UIViewController {
         let index : Int = (Int)(loginRegisterControl.index)
         let title = loginRegisterControl.titles[index]
         loginRegisterButton.titleLabel?.text = title
-        print(index)
         inputsViewContainerHeightAnchor?.constant = (index) == 0 ? 120 : 180
      
         nameTextFieldHeightAnchor?.isActive = false
