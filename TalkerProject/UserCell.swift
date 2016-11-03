@@ -17,15 +17,9 @@ class UserCell: UITableViewCell {
     }
     
     func setupUI() {
-        var chatID : String?
-        if message?.toID == FIRAuth.auth()?.currentUser?.uid {
-            chatID = self.message!.fromID
-        }
-        else {
-            chatID = self.message!.toID
-        }
         
-        if let ID = chatID {
+        
+        if let ID = message?.getChatID() {
             let ref = FIRDatabase.database().reference().child("users").child(ID)
             ref.observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String : AnyObject] {

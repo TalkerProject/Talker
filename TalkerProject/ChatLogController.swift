@@ -9,12 +9,39 @@
 import UIKit
 import Firebase
 
-class ChatLogController : UICollectionViewController, UITextFieldDelegate {
-    
+class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout{
+    let cellID = "cellID"
     var user : User? {
         didSet {
             self.navigationItem.title = user?.name
+            observeMessages()
         }
+    }
+    var messages = [Message]()
+    
+    func observeMessages() {
+        guard let userID = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+        
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(userID)
+        userMessagesRef.observe(.childAdded, with: { (snapshot) in
+            let messageID = snapshot.key
+            let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
+            messageRef.observe(.value, with: { (snapshot) in
+                guard let dictionary = snapshot.value as? [String : AnyObject] else {
+                    return
+                }
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+                if message.getChatID() == self.user?.id {
+                    self.messages.append(message)
+                    DispatchQueue.main.async(execute: {
+                        self.collectionView?.reloadData()
+                    })
+                }
+                }, withCancel: nil)
+            }, withCancel: nil)
     }
     
     lazy var inputsTextField : UITextField = {
@@ -28,7 +55,22 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.backgroundColor = UIColor.white
+        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellID)
         setupInputsContainer()
+    }
+    
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return messages.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath)
+        cell.backgroundColor = UIColor.blue
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: 80)
     }
     
     func setupInputsContainer() {

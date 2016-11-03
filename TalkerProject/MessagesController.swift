@@ -67,6 +67,25 @@ class MessagesController: UITableViewController {
         return 72
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let message = messages[indexPath.row]
+        
+        guard let chatID = message.getChatID() else {
+            return
+        }
+        
+        let ref = FIRDatabase.database().reference().child("users").child(chatID)
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String : AnyObject] else {
+                return
+            }
+            let user = User()
+            user.setValuesForKeys(dictionary)
+            user.id = chatID
+            self.showChatController(user: user)
+            }, withCancel: nil)
+    }
+    
     func setupUI() {
         let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
         let leftBarButtonImage = UIImage(named: "setting")?.withRenderingMode(.alwaysOriginal)
