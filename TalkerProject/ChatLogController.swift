@@ -35,12 +35,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 let message = Message()
                 message.setValuesForKeys(dictionary)
                 
-//                if message.fromID != self.user?.id {
-                    self.messages.append(message)
-                    DispatchQueue.main.async(execute: {
-                        self.collectionView?.reloadData()
-                    })
-//                }
+                //                if message.fromID != self.user?.id {
+                self.messages.append(message)
+                DispatchQueue.main.async(execute: {
+                    self.collectionView?.reloadData()
+                })
+                //                }
                 
                 }, withCancel: nil)
             }, withCancel: nil)
@@ -75,14 +75,19 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let message = messages[indexPath.item]
         var name = ""
         
-        DispatchQueue.main.async(execute: {
-            if message.fromID == self.user?.id {
-                cell.bubbleView.backgroundColor = UIColor.darkGray
-            }
-        })
-
+        
+        if message.fromID == self.user?.id {
+            cell.bubbleView.backgroundColor = UIColor.darkGray
+            cell.textView.text = message.text!
+        }
+        else {
+            cell.bubbleView.backgroundColor = UIColor(r: 0, g: 189, b: 252)
+            cell.textView.text = message.text!
+        }
+        
+        
         cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: message.text!).width + 32
-        cell.textView.text = message.text!
+        
         return cell
     }
     
@@ -152,7 +157,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         let values = ["text" : inputsTextField.text!, "toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp] as [String : Any]
         
-//        childRef.updateChildValues(values)
+        //        childRef.updateChildValues(values)
         let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
         let messageID = childRef.key
         let sentUserRef = userMessagesRef.child(fromID!)
