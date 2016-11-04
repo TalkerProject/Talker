@@ -15,6 +15,7 @@
 		E34B266F1DB4A9C9002F4598 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E34B266D1DB4A9C9002F4598 /* Main.storyboard */; };
 		E34B26711DB4A9C9002F4598 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E34B26701DB4A9C9002F4598 /* Assets.xcassets */; };
 		E34B26741DB4A9C9002F4598 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E34B26721DB4A9C9002F4598 /* LaunchScreen.storyboard */; };
+		E37EEC9C1DCB905A003D3498 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37EEC9B1DCB9059003D3498 /* MessageCell.swift */; };
 		E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B741DBB16D7000961DE /* NewMessageController.swift */; };
 		E3D64B791DBB519A000961DE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B781DBB519A000961DE /* User.swift */; };
 		E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B7C1DBB6519000961DE /* UserCell.swift */; };
@@ -37,6 +38,7 @@
 		E34B26701DB4A9C9002F4598 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E34B26731DB4A9C9002F4598 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E34B26751DB4A9C9002F4598 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E37EEC9B1DCB9059003D3498 /* MessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		E3D64B741DBB16D7000961DE /* NewMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		E3D64B781DBB519A000961DE /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E3D64B7C1DBB6519000961DE /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
@@ -70,8 +72,8 @@
 			isa = PBXGroup;
 			children = (
 				E34B266B1DB4A9C9002F4598 /* MessagesController.swift */,
-				E3271C8C1DB5FEF700F98EDD /* LoginController.swift */,
 				E3D64B741DBB16D7000961DE /* NewMessageController.swift */,
+				E3271C8C1DB5FEF700F98EDD /* LoginController.swift */,
 				E3D64B841DBD31EB000961DE /* SettingController.swift */,
 				E3E23C651DC1DA8B00C6AE8C /* ChatLogController.swift */,
 			);
@@ -126,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				E3D64B7C1DBB6519000961DE /* UserCell.swift */,
+				E37EEC9B1DCB9059003D3498 /* MessageCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3E23C661DC1DA8B00C6AE8C /* ChatLogController.swift in Sources */,
+				E37EEC9C1DCB905A003D3498 /* MessageCell.swift in Sources */,
 				E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */,
 				E34B266C1DB4A9C9002F4598 /* MessagesController.swift in Sources */,
 				E3E23C681DC3327000C6AE8C /* Message.swift in Sources */,

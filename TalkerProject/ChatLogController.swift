@@ -9,8 +9,8 @@
 import UIKit
 import Firebase
 
-class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout{
-    let cellID = "cellID"
+class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
+    let cellID = "cellCollectionID"
     var user : User? {
         didSet {
             self.navigationItem.title = user?.name
@@ -28,18 +28,20 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         userMessagesRef.observe(.childAdded, with: { (snapshot) in
             let messageID = snapshot.key
             let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
-            messageRef.observe(.value, with: { (snapshot) in
+            messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dictionary = snapshot.value as? [String : AnyObject] else {
                     return
                 }
                 let message = Message()
                 message.setValuesForKeys(dictionary)
-                if message.getChatID() == self.user?.id {
+                
+                if message.fromID != self.user?.id {
                     self.messages.append(message)
                     DispatchQueue.main.async(execute: {
                         self.collectionView?.reloadData()
                     })
                 }
+                
                 }, withCancel: nil)
             }, withCancel: nil)
     }
@@ -54,18 +56,20 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
-        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellID)
+        collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         setupInputsContainer()
     }
     
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return messages.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath)
-        cell.backgroundColor = UIColor.blue
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
+        let message = messages[indexPath.item]
+        cell.textView.text = message.text
         return cell
     }
     

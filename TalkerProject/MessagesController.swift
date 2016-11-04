@@ -36,7 +36,7 @@ class MessagesController: UITableViewController {
                 if let dictionary = snapshot.value as? [String : AnyObject] {
                     let message = Message()
                     message.setValuesForKeys(dictionary)
-                    if let toID = message.toID {
+                    if let toID = message.getChatID() {
                         self.messagesDict[toID] = message
                         self.messages = Array(self.messagesDict.values)
                         self.messages.sort(by: { (message1, message2) -> Bool in
