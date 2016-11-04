@@ -35,12 +35,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 let message = Message()
                 message.setValuesForKeys(dictionary)
                 
-                if message.fromID != self.user?.id {
+//                if message.fromID != self.user?.id {
                     self.messages.append(message)
                     DispatchQueue.main.async(execute: {
                         self.collectionView?.reloadData()
                     })
-                }
+//                }
                 
                 }, withCancel: nil)
             }, withCancel: nil)
@@ -51,11 +51,15 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = "Enter messages....."
         textField.delegate = self
+        textField.backgroundColor = UIColor.white
         return textField
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 58, right: 0)
+        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 58, right: 0)
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
@@ -69,16 +73,39 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
         let message = messages[indexPath.item]
-        cell.textView.text = message.text
+        var name = ""
+        
+        DispatchQueue.main.async(execute: {
+            if message.fromID == self.user?.id {
+                cell.bubbleView.backgroundColor = UIColor.darkGray
+            }
+        })
+
+        cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: message.text!).width + 32
+        cell.textView.text = message.text!
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 80)
+        var height : CGFloat = 80
+        
+        if let text = messages[indexPath.item].text {
+            height = getEstimatedFrameForText(text: text).height + 20
+        }
+        return CGSize(width: view.frame.width, height: height)
+    }
+    
+    private func getEstimatedFrameForText(text : String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        
+        //NOTE : try to google how to dynamically change the height of UICollectionViewCell
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 17)], context: nil)
     }
     
     func setupInputsContainer() {
         let containerView = UIView()
+        containerView.backgroundColor = UIColor.white
         containerView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(containerView)
