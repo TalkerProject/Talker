@@ -16,6 +16,7 @@ class MessageCell: UICollectionViewCell {
         tv.backgroundColor = UIColor.clear
         tv.textColor = UIColor.white
         tv.isEditable = false
+        tv.isScrollEnabled = false
         return tv
     }()
     
@@ -28,24 +29,46 @@ class MessageCell: UICollectionViewCell {
         return view
     }()
     
+    let profileImageView : UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "default_avatar")
+        imageView.layer.cornerRadius = 16
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init coder has been failed")
     }
     var bubbleWidthAnchor : NSLayoutConstraint?
-    
+    var bubbleLeftAnchor : NSLayoutConstraint?
+    var bubbleRightAnchor : NSLayoutConstraint?
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         self.addSubview(bubbleView)
-        self.addSubview(textView)
+        bubbleView.addSubview(textView)
+        self.addSubview(profileImageView)
         
         //needs x,y,width, height as always
-        bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
+        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        profileImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        
+        //needs x,y,width, height as always
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         bubbleView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         bubbleView.widthAnchor.constraint(equalToConstant: 200).isActive = true
-
+        bubbleRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
+        bubbleRightAnchor?.isActive = true
+        bubbleLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor,constant: 8)
+        bubbleLeftAnchor?.isActive = true
+        
+        
+        
         //needs x,y,width, height as always
         textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor, constant: -8).isActive = true
         textView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor, constant: 8).isActive = true

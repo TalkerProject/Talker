@@ -35,7 +35,6 @@ class SettingController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
         view.addSubview(profileImageView)
 //        view.addSubview(tableView)
 //        tableView.delegate = self
@@ -45,6 +44,9 @@ class SettingController: UIViewController {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        setupUI()
+    }
     
 }
 

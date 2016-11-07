@@ -23,7 +23,7 @@ class MessagesController: UITableViewController {
         observeUserMessages()
         tableView.register(UserCell.self, forCellReuseIdentifier: "cellID")
     }
-    
+    var timer : Timer?
     func observeUserMessages() {
         guard let userID = FIRAuth.auth()?.currentUser?.uid else {
             return
@@ -44,13 +44,19 @@ class MessagesController: UITableViewController {
                         })
                     }
                 }
-                DispatchQueue.main.async(execute: { 
-                    self.tableView.reloadData()
-                })
-            })
+                self.timer?.invalidate()
+                self.timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+                          })
             }) { (error) in
                 print(error)
         }
+    }
+    
+    func handleReloadTable() {
+        DispatchQueue.main.async(execute: {
+            self.tableView.reloadData()
+        })
+
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

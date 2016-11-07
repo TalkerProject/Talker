@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-
+import AFNetworking
 class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
     let cellID = "cellCollectionID"
     var user : User? {
@@ -18,8 +18,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     }
     var messages = [Message]()
-    
+    var timer : Timer?
     func observeMessages() {
+        
         guard let userID = FIRAuth.auth()?.currentUser?.uid else {
             return
         }
@@ -34,18 +35,23 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 }
                 let message = Message()
                 message.setValuesForKeys(dictionary)
+                if message.getChatID() == self.user?.id {
+                     self.messages.append(message)
+                }
                 
-                //                if message.fromID != self.user?.id {
-                self.messages.append(message)
-                DispatchQueue.main.async(execute: {
-                    self.collectionView?.reloadData()
-                })
-                //                }
+                self.timer?.invalidate()
+                self.timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.handleReloadCollectionView), userInfo: nil, repeats: false)
                 
                 }, withCancel: nil)
             }, withCancel: nil)
     }
     
+    func handleReloadCollectionView() {
+        DispatchQueue.main.async(execute: {
+            self.collectionView?.reloadData()
+            self.collectionView?.reloadData()
+        })
+    }
     lazy var inputsTextField : UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -73,29 +79,38 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
         let message = messages[indexPath.item]
-        var name = ""
         
-        
-        if message.fromID == self.user?.id {
-            cell.bubbleView.backgroundColor = UIColor.darkGray
-            cell.textView.text = message.text!
-        }
-        else {
-            cell.bubbleView.backgroundColor = UIColor(r: 0, g: 189, b: 252)
-            cell.textView.text = message.text!
-        }
-        
-        
-        cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: message.text!).width + 32
+        setupCellUI(cell: cell, message: message)
+        cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: message.text!).width + 7
         
         return cell
     }
     
+    private func setupCellUI(cell : MessageCell, message : Message) {
+        if let profileImageURL = self.user?.profileImageURL {
+            cell.profileImageView.setImageWith(URL(string: profileImageURL)!, placeholderImage: UIImage(named: "default_avatar"))
+        }
+        if message.fromID == self.user?.id {
+            cell.bubbleView.backgroundColor = UIColor.darkGray
+            cell.textView.text = message.text!
+            cell.profileImageView.isHidden = false
+            cell.bubbleLeftAnchor?.isActive = true
+            cell.bubbleRightAnchor?.isActive = false
+        }
+        else {
+            cell.bubbleView.backgroundColor = UIColor(r: 0, g: 189, b: 252)
+            cell.textView.text = message.text!
+            cell.profileImageView.isHidden = true
+            cell.bubbleLeftAnchor?.isActive = false
+            cell.bubbleRightAnchor?.isActive = true
+        }
+    }
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height : CGFloat = 80
         
         if let text = messages[indexPath.item].text {
-            height = getEstimatedFrameForText(text: text).height + 20
+            height = getEstimatedFrameForText(text: text).height + 15
         }
         return CGSize(width: view.frame.width, height: height)
     }
