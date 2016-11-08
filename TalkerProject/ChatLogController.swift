@@ -49,7 +49,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func handleReloadCollectionView() {
         DispatchQueue.main.async(execute: {
             self.collectionView?.reloadData()
-            self.collectionView?.reloadData()
         })
     }
     lazy var inputsTextField : UITextField = {
@@ -69,12 +68,48 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
+        collectionView?.keyboardDismissMode = .interactive
         setupInputsContainer()
+        setupKeyBoard()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+//        NotificationCenter.default.removeObserver(self)
+    }
+    
+    func setupKeyBoard() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleShowKeyBoard), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleHideKeyBoard), name: .UIKeyboardWillHide, object: nil)
+        
+    }
+    
+    func handleHideKeyBoard(notification : NSNotification) {
+        containerViewBottomAnchor?.constant = 0
+        let duration = notification.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as! Double
+ 
+        
+        
+    }
+    
+    func handleShowKeyBoard(notification : NSNotification) {
+        let frame = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
+        let keyboardFrame = frame.cgRectValue
+        
+        let duration = notification.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as! Double
+        
+        containerViewBottomAnchor?.constant = -keyboardFrame.height
+        
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return messages.count
     }
+    
+    
+    //NEED TO ADD function VIEWWILLTRANSITION TO HANDLE WHEN ROTATE THE SCREEN HORIZONTALLY
+    
+    
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
@@ -123,6 +158,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 17)], context: nil)
     }
     
+    var containerViewBottomAnchor : NSLayoutConstraint?
     func setupInputsContainer() {
         let containerView = UIView()
         containerView.backgroundColor = UIColor.white
@@ -131,7 +167,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         view.addSubview(containerView)
         containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         containerView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        containerViewBottomAnchor = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        containerViewBottomAnchor?.isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         let sendButton = UIButton(type: .system)
