@@ -11,7 +11,7 @@ import Firebase
 class MessagesController: UITableViewController {
     let profileImageViewNavBar = UIImageView()
     var messagesDict = [String : Message]()
-
+    
     var messages = [Message]()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,33 +30,39 @@ class MessagesController: UITableViewController {
         }
         let ref = FIRDatabase.database().reference().child("user-messages").child(userID)
         ref.observe(.childAdded, with: { (snapshot) in
-            let messageID = snapshot.key
-            let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
-            messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String : AnyObject] {
-                    let message = Message()
-                    message.setValuesForKeys(dictionary)
-                    if let toID = message.getChatID() {
-                        self.messagesDict[toID] = message
-                        self.messages = Array(self.messagesDict.values)
-                        self.messages.sort(by: { (message1, message2) -> Bool in
-                            return (message1.timeStamp?.intValue)! > (message2.timeStamp?.intValue)!
-                        })
+            let toUserID = snapshot.key
+            FIRDatabase.database().reference().child("user-messages").child(userID).child(toUserID).observe(.childAdded, with: { (snapshot) in
+                let messageID = snapshot.key
+                let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
+                messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let dictionary = snapshot.value as? [String : AnyObject] {
+                        let message = Message()
+                        message.setValuesForKeys(dictionary)
+                        if let toID = message.getChatID() {
+                            self.messagesDict[toID] = message
+                        }
                     }
-                }
-                self.timer?.invalidate()
-                self.timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
-                          })
+                    self.timer?.invalidate()
+                    self.timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+                })
             }) { (error) in
                 print(error)
-        }
+            }
+            
+        })
     }
     
+
+    
     func handleReloadTable() {
+        self.messages = Array(self.messagesDict.values)
+        self.messages.sort(by: { (message1, message2) -> Bool in
+            return (message1.timeStamp?.intValue)! > (message2.timeStamp?.intValue)!
+        })
         DispatchQueue.main.async(execute: {
             self.tableView.reloadData()
         })
-
+        
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

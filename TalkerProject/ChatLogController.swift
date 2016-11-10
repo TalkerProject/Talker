@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import AFNetworking
-class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
+class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let cellID = "cellCollectionID"
     var user : User? {
         didSet {
@@ -21,11 +21,11 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     var timer : Timer?
     func observeMessages() {
         
-        guard let userID = FIRAuth.auth()?.currentUser?.uid else {
+        guard let userID = FIRAuth.auth()?.currentUser?.uid, let toID = user?.id else {
             return
         }
         
-        let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(userID)
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(userID).child(toID)
         userMessagesRef.observe(.childAdded, with: { (snapshot) in
             let messageID = snapshot.key
             let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
@@ -69,37 +69,38 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.keyboardDismissMode = .interactive
+        hideKeyboard()
         setupInputsContainer()
         setupKeyBoard()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-//        NotificationCenter.default.removeObserver(self)
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func setupKeyBoard() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleShowKeyBoard), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleHideKeyBoard), name: .UIKeyboardWillHide, object: nil)
-        
     }
     
     func handleHideKeyBoard(notification : NSNotification) {
         containerViewBottomAnchor?.constant = 0
-        let duration = notification.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as! Double
- 
-        
-        
+        let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
+        UIView.animate(withDuration: keyboardDuration) {
+            self.view.layoutIfNeeded()
+        }
     }
     
     func handleShowKeyBoard(notification : NSNotification) {
         let frame = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
         let keyboardFrame = frame.cgRectValue
-        
-        let duration = notification.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as! Double
+        let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
         
         containerViewBottomAnchor?.constant = -keyboardFrame.height
-        
+        UIView.animate(withDuration: keyboardDuration) { 
+            self.view.layoutIfNeeded()
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -125,6 +126,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         if let profileImageURL = self.user?.profileImageURL {
             cell.profileImageView.setImageWith(URL(string: profileImageURL)!, placeholderImage: UIImage(named: "default_avatar"))
         }
+        
         if message.fromID == self.user?.id {
             cell.bubbleView.backgroundColor = UIColor.darkGray
             cell.textView.text = message.text!
@@ -158,6 +160,71 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 17)], context: nil)
     }
     
+    func handleUploadImageTap() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        var selectedImageFromPicker: UIImage?
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            selectedImageFromPicker = editedImage
+        }
+        else {
+            if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+                selectedImageFromPicker = originalImage
+            }
+        }
+        
+        if let selectedImage = selectedImageFromPicker  {
+            //this blog of code below is used for uploading the image to Firebase's storage then update to the user's database
+            uploadImageToFireBaseStorage(imageToUpload: selectedImage)
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    private func uploadImageToFireBaseStorage(imageToUpload : UIImage) {
+        let imageName = NSUUID().uuidString
+        let ref = FIRStorage.storage().reference().child("image_messages").child(imageName)
+        
+        if let uploadData = UIImageJPEGRepresentation(imageToUpload, 0.2) {
+            ref.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                if error != nil {
+                    print(error)
+                }
+                
+                if let imageURL = metadata?.downloadURL()?.absoluteString {
+                    let ref = FIRDatabase.database().reference().child("messages")
+                    let childRef = ref.childByAutoId()
+                    let toID = self.user?.id
+                    let fromID = FIRAuth.auth()?.currentUser?.uid
+                    let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
+                    
+                    let values = ["imageURL" : imageURL, "toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp] as [String : Any]
+                    
+                    //        childRef.updateChildValues(values)
+                    let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+                    let messageID = childRef.key
+                    let sentUserRef = userMessagesRef.child(fromID!).child(toID!)
+                    let recipientUserRef = userMessagesRef.child(toID!).child(fromID!)
+                    childRef.updateChildValues(values) { (error, ref) in
+                        if error != nil {
+                            print(error)
+                            return
+                        }
+                        
+                        sentUserRef.updateChildValues([messageID : 1])
+                        recipientUserRef.updateChildValues([messageID : 1])
+                        
+                    }
+                }
+            })
+        }
+        
+    }
+    
     var containerViewBottomAnchor : NSLayoutConstraint?
     func setupInputsContainer() {
         let containerView = UIView()
@@ -170,6 +237,17 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         containerViewBottomAnchor = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         containerViewBottomAnchor?.isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        let uploadImageView = UIImageView()
+        uploadImageView.image = UIImage(named: "upload_image")?.withRenderingMode(.alwaysOriginal)
+        uploadImageView.isUserInteractionEnabled = true
+        uploadImageView.translatesAutoresizingMaskIntoConstraints = false
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadImageTap)))
+        containerView.addSubview(uploadImageView)
+        uploadImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
+        uploadImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        uploadImageView.heightAnchor.constraint(equalToConstant: 44).isActive = true
         
         let sendButton = UIButton(type: .system)
         sendButton.setTitle("SEND", for: .normal)
@@ -184,7 +262,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         containerView.addSubview(inputsTextField)
         inputsTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor).isActive = true
-        inputsTextField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
+        inputsTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 8).isActive = true
         inputsTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         inputsTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
         
@@ -212,8 +290,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         //        childRef.updateChildValues(values)
         let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
         let messageID = childRef.key
-        let sentUserRef = userMessagesRef.child(fromID!)
-        let recipientUserRef = userMessagesRef.child(toID!)
+        let sentUserRef = userMessagesRef.child(fromID!).child(toID!)
+        let recipientUserRef = userMessagesRef.child(toID!).child(fromID!)
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error)
