@@ -36,7 +36,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 let message = Message()
                 message.setValuesForKeys(dictionary)
                 if message.getChatID() == self.user?.id {
-                     self.messages.append(message)
+                    self.messages.append(message)
                 }
                 
                 self.timer?.invalidate()
@@ -73,7 +73,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         setupInputsContainer()
         setupKeyBoard()
     }
-
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
@@ -98,7 +98,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
         
         containerViewBottomAnchor?.constant = -keyboardFrame.height
-        UIView.animate(withDuration: keyboardDuration) { 
+        UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
         }
     }
@@ -111,38 +111,47 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     //NEED TO ADD function VIEWWILLTRANSITION TO HANDLE WHEN ROTATE THE SCREEN HORIZONTALLY
     
     
-    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
         let message = messages[indexPath.item]
-        
         setupCellUI(cell: cell, message: message)
-        cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: message.text!).width + 7
-        
+
+        cell.textView.text = message.text
+        if let text = message.text {
+            cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 7
+        }
         return cell
     }
     
     private func setupCellUI(cell : MessageCell, message : Message) {
+        if let messageImageURL = message.imageURL {
+            cell.messageImageView.setImageWith(URL(string: messageImageURL)!)
+            cell.messageImageView.isHidden = false
+        }
+        else {
+            cell.messageImageView.isHidden = true
+        }
+        
         if let profileImageURL = self.user?.profileImageURL {
             cell.profileImageView.setImageWith(URL(string: profileImageURL)!, placeholderImage: UIImage(named: "default_avatar"))
         }
         
+        //Check to setup the UI if it is from the current user or not
         if message.fromID == self.user?.id {
             cell.bubbleView.backgroundColor = UIColor.darkGray
-            cell.textView.text = message.text!
             cell.profileImageView.isHidden = false
             cell.bubbleLeftAnchor?.isActive = true
             cell.bubbleRightAnchor?.isActive = false
         }
         else {
             cell.bubbleView.backgroundColor = UIColor(r: 0, g: 189, b: 252)
-            cell.textView.text = message.text!
             cell.profileImageView.isHidden = true
             cell.bubbleLeftAnchor?.isActive = false
             cell.bubbleRightAnchor?.isActive = true
         }
+        
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height : CGFloat = 80
         
@@ -243,25 +252,26 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
         uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadImageTap)))
+        
         containerView.addSubview(uploadImageView)
-        uploadImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
+        uploadImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 6).isActive = true
         uploadImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
         uploadImageView.heightAnchor.constraint(equalToConstant: 44).isActive = true
         
-        let sendButton = UIButton(type: .system)
-        sendButton.setTitle("SEND", for: .normal)
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        
-        containerView.addSubview(sendButton)
-        sendButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        sendButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-        sendButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        let sendButtonView = UIImageView()
+        sendButtonView.image = UIImage(named: "send_image")?.withRenderingMode(.alwaysOriginal)
+        sendButtonView.isUserInteractionEnabled = true
+        sendButtonView.translatesAutoresizingMaskIntoConstraints = false
+        sendButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSend)))
+        containerView.addSubview(sendButtonView)
+        sendButtonView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -8).isActive = true
+        sendButtonView.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        sendButtonView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        sendButtonView.heightAnchor.constraint(equalToConstant: 28).isActive = true
         
         containerView.addSubview(inputsTextField)
-        inputsTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor).isActive = true
+        inputsTextField.rightAnchor.constraint(equalTo: sendButtonView.leftAnchor).isActive = true
         inputsTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 8).isActive = true
         inputsTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         inputsTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
@@ -302,6 +312,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             recipientUserRef.updateChildValues([messageID : 1])
             
         }
+        self.inputsTextField.text = nil
         
     }
     

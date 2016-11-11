@@ -39,6 +39,17 @@ class MessageCell: UICollectionViewCell {
         return imageView
     }()
     
+    let messageImageView : UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 10
+        imageView.layer.masksToBounds = true
+        imageView.backgroundColor = UIColor.clear
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+
+    }()
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init coder has been failed")
     }
@@ -49,8 +60,9 @@ class MessageCell: UICollectionViewCell {
         super.init(frame: frame)
         
         self.addSubview(bubbleView)
-        bubbleView.addSubview(textView)
         self.addSubview(profileImageView)
+        bubbleView.addSubview(messageImageView)
+        bubbleView.addSubview(textView)
         
         //needs x,y,width, height as always
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
@@ -67,8 +79,6 @@ class MessageCell: UICollectionViewCell {
         bubbleLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor,constant: 8)
         bubbleLeftAnchor?.isActive = true
         
-        
-        
         //needs x,y,width, height as always
         textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor, constant: -8).isActive = true
         textView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor, constant: 8).isActive = true
@@ -77,6 +87,12 @@ class MessageCell: UICollectionViewCell {
         textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         bubbleWidthAnchor = textView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
+        
+         //needs x,y,width, height as always
+        messageImageView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
+        messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
+        messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
+        messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
         
     }
     
