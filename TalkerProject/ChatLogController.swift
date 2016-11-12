@@ -33,8 +33,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 guard let dictionary = snapshot.value as? [String : AnyObject] else {
                     return
                 }
-                let message = Message()
-                message.setValuesForKeys(dictionary)
+                let message = Message(dictionary: dictionary)
+
                 if message.getChatID() == self.user?.id {
                     self.messages.append(message)
                 }
@@ -118,7 +118,10 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
 
         cell.textView.text = message.text
         if let text = message.text {
-            cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 7
+            cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 10
+        }
+        else if message.imageURL != nil {
+            cell.bubbleWidthAnchor?.constant = 200
         }
         return cell
     }
@@ -149,24 +152,29 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.bubbleLeftAnchor?.isActive = false
             cell.bubbleRightAnchor?.isActive = true
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height : CGFloat = 80
         
         if let text = messages[indexPath.item].text {
-            height = getEstimatedFrameForText(text: text).height + 15
+            height = getEstimatedFrameForText(text: text).height + 20
+        } else if messages[indexPath.item].imageURL != nil {
+            height = 200
         }
-        return CGSize(width: view.frame.width, height: height)
+        
+        let width = UIScreen.main.bounds.width
+    
+        return CGSize(width: width, height: height)
     }
     
     private func getEstimatedFrameForText(text : String) -> CGRect {
         let size = CGSize(width: 200, height: 1000)
         
+        
         //NOTE : try to google how to dynamically change the height of UICollectionViewCell
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 17)], context: nil)
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
     func handleUploadImageTap() {
@@ -192,46 +200,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             uploadImageToFireBaseStorage(imageToUpload: selectedImage)
         }
         dismiss(animated: true, completion: nil)
-    }
-    
-    private func uploadImageToFireBaseStorage(imageToUpload : UIImage) {
-        let imageName = NSUUID().uuidString
-        let ref = FIRStorage.storage().reference().child("image_messages").child(imageName)
-        
-        if let uploadData = UIImageJPEGRepresentation(imageToUpload, 0.2) {
-            ref.put(uploadData, metadata: nil, completion: { (metadata, error) in
-                if error != nil {
-                    print(error)
-                }
-                
-                if let imageURL = metadata?.downloadURL()?.absoluteString {
-                    let ref = FIRDatabase.database().reference().child("messages")
-                    let childRef = ref.childByAutoId()
-                    let toID = self.user?.id
-                    let fromID = FIRAuth.auth()?.currentUser?.uid
-                    let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
-                    
-                    let values = ["imageURL" : imageURL, "toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp] as [String : Any]
-                    
-                    //        childRef.updateChildValues(values)
-                    let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
-                    let messageID = childRef.key
-                    let sentUserRef = userMessagesRef.child(fromID!).child(toID!)
-                    let recipientUserRef = userMessagesRef.child(toID!).child(fromID!)
-                    childRef.updateChildValues(values) { (error, ref) in
-                        if error != nil {
-                            print(error)
-                            return
-                        }
-                        
-                        sentUserRef.updateChildValues([messageID : 1])
-                        recipientUserRef.updateChildValues([messageID : 1])
-                        
-                    }
-                }
-            })
-        }
-        
     }
     
     var containerViewBottomAnchor : NSLayoutConstraint?
@@ -315,5 +283,47 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         self.inputsTextField.text = nil
         
     }
+    
+    private func uploadImageToFireBaseStorage(imageToUpload : UIImage) {
+        let imageName = NSUUID().uuidString
+        let ref = FIRStorage.storage().reference().child("image_messages").child(imageName)
+        
+        if let uploadData = UIImageJPEGRepresentation(imageToUpload, 0.2) {
+            ref.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                if error != nil {
+                    print(error)
+                }
+                
+                if let imageURL = metadata?.downloadURL()?.absoluteString {
+                    let ref = FIRDatabase.database().reference().child("messages")
+                    let childRef = ref.childByAutoId()
+                    let toID = self.user?.id
+                    let fromID = FIRAuth.auth()?.currentUser?.uid
+                    let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
+                    
+                    let values = ["toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp, "imageURL" : imageURL, "imageWidth" : imageToUpload.size.width, "imageHeight" : imageToUpload.size.height] as [String : Any]
+                    
+                    
+                    //        childRef.updateChildValues(values)
+                    let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+                    let messageID = childRef.key
+                    let sentUserRef = userMessagesRef.child(fromID!).child(toID!)
+                    let recipientUserRef = userMessagesRef.child(toID!).child(fromID!)
+                    childRef.updateChildValues(values) { (error, ref) in
+                        if error != nil {
+                            print(error)
+                            return
+                        }
+                        
+                        sentUserRef.updateChildValues([messageID : 1])
+                        recipientUserRef.updateChildValues([messageID : 1])
+                        
+                    }
+                }
+            })
+        }
+        
+    }
+
     
 }
