@@ -34,7 +34,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                     return
                 }
                 let message = Message(dictionary: dictionary)
-
+                
                 if message.getChatID() == self.user?.id {
                     self.messages.append(message)
                 }
@@ -49,6 +49,10 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func handleReloadCollectionView() {
         DispatchQueue.main.async(execute: {
             self.collectionView?.reloadData()
+            let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+            if self.messages.count > 0 {
+                self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            }
         })
     }
     lazy var inputsTextField : UITextField = {
@@ -87,6 +91,11 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func handleHideKeyBoard(notification : NSNotification) {
         containerViewBottomAnchor?.constant = 0
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
+        let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+        if self.messages.count > 0 {
+            collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 58, right: 0)
+            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+        }
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
         }
@@ -96,7 +105,11 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let frame = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
         let keyboardFrame = frame.cgRectValue
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
-        
+        let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+        if self.messages.count > 0 {
+            collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 58 + keyboardFrame.height, right: 0)
+            self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
+        }
         containerViewBottomAnchor?.constant = -keyboardFrame.height
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
@@ -115,7 +128,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
         let message = messages[indexPath.item]
         setupCellUI(cell: cell, message: message)
-
+        
         cell.textView.text = message.text
         if let text = message.text {
             cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 10
@@ -156,21 +169,20 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height : CGFloat = 80
-        
+        let width = UIScreen.main.bounds.width
+
         if let text = messages[indexPath.item].text {
             height = getEstimatedFrameForText(text: text).height + 20
-        } else if messages[indexPath.item].imageURL != nil {
-            height = 200
+        } else if let originalWidth = messages[indexPath.item].imageWidth?.floatValue,
+            let originalHeight = messages[indexPath.item].imageHeight?.floatValue {
+            height = CGFloat((originalHeight * 200) / originalWidth)
         }
         
-        let width = UIScreen.main.bounds.width
-    
         return CGSize(width: width, height: height)
     }
     
     private func getEstimatedFrameForText(text : String) -> CGRect {
         let size = CGSize(width: 200, height: 1000)
-        
         
         //NOTE : try to google how to dynamically change the height of UICollectionViewCell
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
@@ -257,19 +269,27 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     
     func handleSend() {
+        sendMessagesWithProperties(properties: ["text" : inputsTextField.text!])
+    }
+    
+    private func sendMessagesWithProperties(properties : [String : Any]) {
         let ref = FIRDatabase.database().reference().child("messages")
         let childRef = ref.childByAutoId()
-        let toID = self.user?.id
+        let toID = user?.id
         let fromID = FIRAuth.auth()?.currentUser?.uid
         let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
         
-        let values = ["text" : inputsTextField.text!, "toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp] as [String : Any]
+        var values : [String : Any] = ["toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp]
         
-        //        childRef.updateChildValues(values)
+        for key in properties.keys {
+            values[key] = properties[key]
+        }
+        
         let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
         let messageID = childRef.key
         let sentUserRef = userMessagesRef.child(fromID!).child(toID!)
         let recipientUserRef = userMessagesRef.child(toID!).child(fromID!)
+        
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error)
@@ -281,7 +301,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             
         }
         self.inputsTextField.text = nil
-        
     }
     
     private func uploadImageToFireBaseStorage(imageToUpload : UIImage) {
@@ -295,35 +314,13 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 }
                 
                 if let imageURL = metadata?.downloadURL()?.absoluteString {
-                    let ref = FIRDatabase.database().reference().child("messages")
-                    let childRef = ref.childByAutoId()
-                    let toID = self.user?.id
-                    let fromID = FIRAuth.auth()?.currentUser?.uid
-                    let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
-                    
-                    let values = ["toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp, "imageURL" : imageURL, "imageWidth" : imageToUpload.size.width, "imageHeight" : imageToUpload.size.height] as [String : Any]
-                    
-                    
-                    //        childRef.updateChildValues(values)
-                    let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
-                    let messageID = childRef.key
-                    let sentUserRef = userMessagesRef.child(fromID!).child(toID!)
-                    let recipientUserRef = userMessagesRef.child(toID!).child(fromID!)
-                    childRef.updateChildValues(values) { (error, ref) in
-                        if error != nil {
-                            print(error)
-                            return
-                        }
-                        
-                        sentUserRef.updateChildValues([messageID : 1])
-                        recipientUserRef.updateChildValues([messageID : 1])
-                        
-                    }
+                    self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageWidth" : imageToUpload.size.width, "imageHeight" : imageToUpload.size.height])
+        
                 }
             })
         }
         
     }
-
+    
     
 }
