@@ -128,7 +128,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
         let message = messages[indexPath.item]
         setupCellUI(cell: cell, message: message)
-        
+        cell.chatLogController = self
         cell.textView.text = message.text
         if let text = message.text {
             cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 10
@@ -139,13 +139,57 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return cell
     }
     
+    var blackBackground : UIView?
+    var originalImageFrame : CGRect?
+    
+    func performZoomInToViewImageMessage(originalImageView : UIImageView) {
+        originalImageFrame = originalImageView.superview?.convert(originalImageView.frame, to: nil)
+        
+        let zoomingImageView = UIImageView(frame: originalImageFrame!)
+        zoomingImageView.image = originalImageView.image
+        zoomingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleZoomOutToCancelViewImageMessage)))
+        zoomingImageView.isUserInteractionEnabled = true
+        self.blackBackground?.backgroundColor = UIColor.black
+        if let screenFrame = UIApplication.shared.keyWindow {
+            blackBackground = UIView(frame: screenFrame.frame)
+            screenFrame.addSubview(blackBackground!)
+            screenFrame.addSubview(zoomingImageView)
+            
+            let zoomingHeight : CGFloat = (originalImageFrame!.height / originalImageFrame!.width) * screenFrame.frame.width
+            UIView.animate(withDuration: 0.5, animations: {
+                self.blackBackground?.backgroundColor = UIColor.black
+                self.blackBackground?.alpha = 1
+                zoomingImageView.frame = CGRect(x: 0, y: 0, width: screenFrame.frame.width, height: zoomingHeight)
+                zoomingImageView.center = screenFrame.center
+                }, completion: nil)
+        }
+    }
+    
+    func handleZoomOutToCancelViewImageMessage(tapGesture : UITapGestureRecognizer) {
+        if let zoomOutImage = tapGesture.view {
+            
+            UIView.animate(withDuration: 0.5, animations: {
+                zoomOutImage.frame = self.originalImageFrame!
+                self.blackBackground?.alpha = 0
+            }) { (completed) in
+                //do something
+                zoomOutImage.removeFromSuperview()
+                
+            }
+            
+        }
+        
+    }
+    
     private func setupCellUI(cell : MessageCell, message : Message) {
         if let messageImageURL = message.imageURL {
             cell.messageImageView.setImageWith(URL(string: messageImageURL)!)
             cell.messageImageView.isHidden = false
+            cell.textView.isHidden = true
         }
         else {
             cell.messageImageView.isHidden = true
+            cell.textView.isHidden = false
         }
         
         if let profileImageURL = self.user?.profileImageURL {
@@ -170,7 +214,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height : CGFloat = 80
         let width = UIScreen.main.bounds.width
-
+        
         if let text = messages[indexPath.item].text {
             height = getEstimatedFrameForText(text: text).height + 20
         } else if let originalWidth = messages[indexPath.item].imageWidth?.floatValue,
@@ -315,7 +359,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 
                 if let imageURL = metadata?.downloadURL()?.absoluteString {
                     self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageWidth" : imageToUpload.size.width, "imageHeight" : imageToUpload.size.height])
-        
+                    
                 }
             })
         }

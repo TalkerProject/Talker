@@ -9,6 +9,8 @@
 import UIKit
 
 class MessageCell: UICollectionViewCell {
+    
+    var chatLogController : ChatLogController?
     let textView : UITextView = {
         let tv = UITextView()
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -39,16 +41,23 @@ class MessageCell: UICollectionViewCell {
         return imageView
     }()
     
-    let messageImageView : UIImageView = {
+    lazy var messageImageView : UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 10
         imageView.layer.masksToBounds = true
         imageView.backgroundColor = UIColor.clear
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapImageMessage)))
         return imageView
-
     }()
+    
+    func handleTapImageMessage(tapGesture : UITapGestureRecognizer) {
+        if let imageView = tapGesture.view as? UIImageView {
+            self.chatLogController?.performZoomInToViewImageMessage(originalImageView: imageView)
+        }
+    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init coder has been failed")
