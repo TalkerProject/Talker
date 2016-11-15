@@ -17,14 +17,14 @@ class UserCell: UITableViewCell {
     }
     
     func setupUI() {
-        
-        
         if let ID = message?.getChatID() {
             let ref = FIRDatabase.database().reference().child("users").child(ID)
             ref.observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String : AnyObject] {
                     self.textLabel?.text = dictionary["name"] as? String
-                    self.detailTextLabel?.text = self.message?.text
+
+                    self.detailTextLabel?.text = self.message?.text ?? "Sent an image"
+                    
                     if let profileImageURL = dictionary["profileImageURL"] as? String {
                         self.profileImageView.setImageWith(URL(string: profileImageURL)!)
                     }

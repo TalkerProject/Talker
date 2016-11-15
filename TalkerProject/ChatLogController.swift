@@ -20,11 +20,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     var messages = [Message]()
     var timer : Timer?
     func observeMessages() {
-        
         guard let userID = FIRAuth.auth()?.currentUser?.uid, let toID = user?.id else {
             return
         }
-        
         let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(userID).child(toID)
         userMessagesRef.observe(.childAdded, with: { (snapshot) in
             let messageID = snapshot.key
@@ -50,9 +48,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         DispatchQueue.main.async(execute: {
             self.collectionView?.reloadData()
             let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-            if self.messages.count > 0 {
-                self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
-            }
+            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            
         })
     }
     lazy var inputsTextField : UITextField = {
@@ -68,7 +65,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         super.viewDidLoad()
         
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 58, right: 0)
-        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 58, right: 0)
+//        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 58, right: 0)
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
@@ -84,18 +81,15 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     
     func setupKeyBoard() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleShowKeyBoard), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleHideKeyBoard), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleShowKeyBoard), name: .UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleHideKeyBoard), name: .UIKeyboardDidHide, object: nil)
     }
     
     func handleHideKeyBoard(notification : NSNotification) {
         containerViewBottomAnchor?.constant = 0
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
         let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-        if self.messages.count > 0 {
-            collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 58, right: 0)
-            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
-        }
+        self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
         }
@@ -105,11 +99,10 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let frame = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
         let keyboardFrame = frame.cgRectValue
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
+        
         let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-        if self.messages.count > 0 {
-            collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 58 + keyboardFrame.height, right: 0)
-            self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
-        }
+        self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
+        
         containerViewBottomAnchor?.constant = -keyboardFrame.height
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
@@ -127,11 +120,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
         let message = messages[indexPath.item]
+        cell.messageImageView.isHidden = true
         setupCellUI(cell: cell, message: message)
         cell.chatLogController = self
         cell.textView.text = message.text
         if let text = message.text {
-            cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 10
+            cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 20
         }
         else if message.imageURL != nil {
             cell.bubbleView.backgroundColor = UIColor.clear
