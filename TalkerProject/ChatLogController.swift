@@ -134,6 +134,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 10
         }
         else if message.imageURL != nil {
+            cell.bubbleView.backgroundColor = UIColor.clear
             cell.bubbleWidthAnchor?.constant = 200
         }
         return cell
@@ -141,10 +142,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     var blackBackground : UIView?
     var originalImageFrame : CGRect?
+    var originalImageView : UIImageView?
     
     func performZoomInToViewImageMessage(originalImageView : UIImageView) {
         originalImageFrame = originalImageView.superview?.convert(originalImageView.frame, to: nil)
-        
+        self.originalImageView = originalImageView
+        self.originalImageView?.isHidden = true
         let zoomingImageView = UIImageView(frame: originalImageFrame!)
         zoomingImageView.image = originalImageView.image
         zoomingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleZoomOutToCancelViewImageMessage)))
@@ -167,18 +170,17 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     func handleZoomOutToCancelViewImageMessage(tapGesture : UITapGestureRecognizer) {
         if let zoomOutImage = tapGesture.view {
-            
+            zoomOutImage.layer.cornerRadius = 16
+            zoomOutImage.clipsToBounds = true
             UIView.animate(withDuration: 0.5, animations: {
                 zoomOutImage.frame = self.originalImageFrame!
                 self.blackBackground?.alpha = 0
             }) { (completed) in
                 //do something
                 zoomOutImage.removeFromSuperview()
-                
+                self.originalImageView?.isHidden = false
             }
-            
         }
-        
     }
     
     private func setupCellUI(cell : MessageCell, message : Message) {
