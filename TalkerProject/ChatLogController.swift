@@ -47,11 +47,13 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func handleReloadCollectionView() {
         DispatchQueue.main.async(execute: {
             self.collectionView?.reloadData()
-            let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
-            
+            if self.messages.count > 0 {
+                let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+                self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            }
         })
     }
+    
     lazy var inputsTextField : UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -64,14 +66,13 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 58, right: 0)
-//        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 58, right: 0)
+        collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.keyboardDismissMode = .interactive
         hideKeyboard()
-        setupInputsContainer()
+        //        setupInputsContainer()
         setupKeyBoard()
     }
     
@@ -86,33 +87,33 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     
     func handleHideKeyBoard(notification : NSNotification) {
-        containerViewBottomAnchor?.constant = 0
-        let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
-        let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-        self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
-        UIView.animate(withDuration: keyboardDuration) {
-            self.view.layoutIfNeeded()
+        if self.messages.count > 0 {
+            let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
         }
     }
     
+    var keyBoardDidShow = false
+    
     func handleShowKeyBoard(notification : NSNotification) {
-        let frame = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
-        let keyboardFrame = frame.cgRectValue
-        let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
-        
-        let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-        self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
-        
-        containerViewBottomAnchor?.constant = -keyboardFrame.height
-        UIView.animate(withDuration: keyboardDuration) {
-            self.view.layoutIfNeeded()
+//        let keyboard = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
+//        let keyboardFrame = keyboard.cgRectValue
+        if self.messages.count > 0 && keyBoardDidShow {
+            let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+            print(indexPath.item)
+            self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
         }
+        
+        keyBoardDidShow = true
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return messages.count
     }
     
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
     
     //NEED TO ADD function VIEWWILLTRANSITION TO HANDLE WHEN ROTATE THE SCREEN HORIZONTALLY
     
@@ -254,18 +255,10 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         dismiss(animated: true, completion: nil)
     }
     
-    var containerViewBottomAnchor : NSLayoutConstraint?
-    func setupInputsContainer() {
+    lazy var inputViewContainer : UIView = {
         let containerView = UIView()
+        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
         containerView.backgroundColor = UIColor.white
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(containerView)
-        containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        containerView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        containerViewBottomAnchor = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        containerViewBottomAnchor?.isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         let uploadImageView = UIImageView()
         uploadImageView.image = UIImage(named: "upload_image")?.withRenderingMode(.alwaysOriginal)
@@ -290,11 +283,11 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         sendButtonView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         sendButtonView.heightAnchor.constraint(equalToConstant: 28).isActive = true
         
-        containerView.addSubview(inputsTextField)
-        inputsTextField.rightAnchor.constraint(equalTo: sendButtonView.leftAnchor).isActive = true
-        inputsTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 8).isActive = true
-        inputsTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-        inputsTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        containerView.addSubview(self.inputsTextField)
+        self.inputsTextField.rightAnchor.constraint(equalTo: sendButtonView.leftAnchor).isActive = true
+        self.inputsTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 8).isActive = true
+        self.inputsTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+        self.inputsTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
         
         let lineSepeartor = UIView()
         lineSepeartor.backgroundColor = UIColor.darkGray
@@ -304,8 +297,19 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         containerView.addSubview(lineSepeartor)
         lineSepeartor.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         lineSepeartor.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        lineSepeartor.bottomAnchor.constraint(equalTo: inputsTextField.topAnchor).isActive = true
+        lineSepeartor.bottomAnchor.constraint(equalTo: self.inputsTextField.topAnchor).isActive = true
         lineSepeartor.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        return containerView
+    }()
+    
+    override var inputAccessoryView: UIView? {
+        get {
+            return inputViewContainer
+        }
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
     }
     
     func handleSend() {
