@@ -108,8 +108,6 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
         
     }
     
-    
-    
     func setupUI() {
         view.backgroundColor = UIColor.white
         

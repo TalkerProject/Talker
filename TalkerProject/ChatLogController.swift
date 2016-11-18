@@ -9,6 +9,9 @@
 import UIKit
 import Firebase
 import AFNetworking
+import MobileCoreServices
+import AVFoundation
+
 class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let cellID = "cellCollectionID"
     var user : User? {
@@ -96,8 +99,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     var keyBoardDidShow = false
     
     func handleShowKeyBoard(notification : NSNotification) {
-//        let keyboard = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
-//        let keyboardFrame = keyboard.cgRectValue
+        //        let keyboard = notification.userInfo?["UIKeyboardFrameEndUserInfoKey"] as! NSValue
+        //        let keyboardFrame = keyboard.cgRectValue
         if self.messages.count > 0 && keyBoardDidShow {
             let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
             print(indexPath.item)
@@ -126,7 +129,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         cell.chatLogController = self
         cell.textView.text = message.text
         if let text = message.text {
-            cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 20
+            cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 16
         }
         else if message.imageURL != nil {
             cell.bubbleView.backgroundColor = UIColor.clear
@@ -230,14 +233,26 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
-    func handleUploadImageTap() {
+    func handleUploadImageOrVideoTap() {
         let picker = UIImagePickerController()
         picker.delegate = self
         picker.allowsEditing = true
+        picker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
+        
         present(picker, animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        if let videoURL = info[UIImagePickerControllerMediaURL] as? URL {
+            handleSelectVideoFromPicker(videoURL: videoURL)
+        } else {
+            handleSelectImageFromPicker(info: info as [String : AnyObject])
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    private func handleSelectImageFromPicker(info : [String : AnyObject]) {
         var selectedImageFromPicker: UIImage?
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
             selectedImageFromPicker = editedImage
@@ -252,7 +267,31 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             //this blog of code below is used for uploading the image to Firebase's storage then update to the user's database
             uploadImageToFireBaseStorage(imageToUpload: selectedImage)
         }
-        dismiss(animated: true, completion: nil)
+    }
+    
+    private func handleSelectVideoFromPicker(videoURL : URL) {
+        let fileName = "videoDemoUpload.mov"
+        let uploadTask = FIRStorage.storage().reference().child(fileName).putFile(videoURL, metadata: nil, completion: { (metadata, error) in
+            
+            if error != nil {
+                print("Fail to upload video", error)
+                return
+            }
+            
+            if let storageURL = metadata?.downloadURL()?.absoluteString {
+                print(storageURL)
+            }
+        })
+        
+        uploadTask.observe(.progress) { (snapshot) in
+            if let completedUnitCount = snapshot.progress?.completedUnitCount {
+                self.navigationItem.title = String(completedUnitCount)
+            }
+        }
+        
+        uploadTask.observe(.success) { (snapshot) in
+                self.navigationItem.title = self.user?.name
+        }
     }
     
     lazy var inputViewContainer : UIView = {
@@ -264,7 +303,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         uploadImageView.image = UIImage(named: "upload_image")?.withRenderingMode(.alwaysOriginal)
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
-        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadImageTap)))
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadImageOrVideoTap)))
         
         containerView.addSubview(uploadImageView)
         uploadImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 6).isActive = true
@@ -356,7 +395,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 if error != nil {
                     print(error)
                 }
-                
                 if let imageURL = metadata?.downloadURL()?.absoluteString {
                     self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageWidth" : imageToUpload.size.width, "imageHeight" : imageToUpload.size.height])
                     
