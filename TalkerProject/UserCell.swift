@@ -23,7 +23,12 @@ class UserCell: UITableViewCell {
                 if let dictionary = snapshot.value as? [String : AnyObject] {
                     self.textLabel?.text = dictionary["name"] as? String
 
-                    self.detailTextLabel?.text = self.message?.text ?? "Sent an image"
+                    if self.message?.videoURL != nil {
+                        self.detailTextLabel?.text = "Sent a video"
+                    }
+                    else {
+                        self.detailTextLabel?.text = self.message?.text ?? "Sent a photo"
+                    }
                     
                     if let profileImageURL = dictionary["profileImageURL"] as? String {
                         self.profileImageView.setImageWith(URL(string: profileImageURL)!)

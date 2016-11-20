@@ -11,6 +11,7 @@ import Firebase
 import AFNetworking
 import MobileCoreServices
 import AVFoundation
+import AVKit
 
 class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let cellID = "cellCollectionID"
@@ -127,6 +128,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         setupCellUI(cell: cell, message: message)
         cell.chatLogController = self
         cell.message = message
+        cell.delegate = self
         cell.textView.text = message.text
         if let text = message.text {
             cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 16
@@ -153,6 +155,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         zoomingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleZoomOutToCancelViewImageMessage)))
         zoomingImageView.isUserInteractionEnabled = true
         self.blackBackground?.backgroundColor = UIColor.black
+        inputAccessoryView?.isHidden = true
         if let screenFrame = UIApplication.shared.keyWindow {
             blackBackground = UIView(frame: screenFrame.frame)
             screenFrame.addSubview(blackBackground!)
@@ -172,6 +175,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         if let zoomOutImage = tapGesture.view {
             zoomOutImage.layer.cornerRadius = 16
             zoomOutImage.clipsToBounds = true
+            inputAccessoryView?.isHidden = false
             UIView.animate(withDuration: 0.5, animations: {
                 zoomOutImage.frame = self.originalImageFrame!
                 self.blackBackground?.alpha = 0
@@ -429,6 +433,18 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
         
     }
-    
-    
+}
+
+extension ChatLogController : messageCellProtocol {
+    func didPressPlayVideoButton(videoURL: String) {
+        let playerVC = AVPlayerViewController()
+        let player = AVPlayer(url: URL(string: videoURL)!)
+        if #available(iOS 10.0, *) {
+            player.playImmediately(atRate: 1)
+        } else {
+            // Fallback on earlier versions
+        }
+        playerVC.player = player
+        present(playerVC, animated: true, completion: nil)
+    }
 }

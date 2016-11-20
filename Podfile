@@ -11,5 +11,7 @@ target 'TalkerProject' do
   pod ‘Firebase/Storage’
   pod 'BetterSegmentedControl', '~> 0.5'
   pod 'AFNetworking', '~> 3.0'
+  pod 'NVActivityIndicatorView'
+
 
 end
