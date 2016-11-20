@@ -154,6 +154,7 @@
 				E34B26641DB4A9C9002F4598 /* Resources */,
 				489443FFFAE655A0EE97AECB /* [CP] Embed Pods Frameworks */,
 				3CBE76D0007659DB930DC02C /* [CP] Copy Pods Resources */,
+				E3CBA9871DE14C2F00F20405 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -248,6 +249,20 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TalkerProject/Pods-TalkerProject-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		E3CBA9871DE14C2F00F20405 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "function removeHeaders() {\n    find $BUILD_ROOT/Debug-iphoneos/  -name '*.h' -exec rm -f {} \\;\n}\nremoveHeaders";
 		};
 		FD5F33A1E25C116E1F5D59EC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

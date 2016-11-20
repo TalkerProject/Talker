@@ -103,7 +103,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         //        let keyboardFrame = keyboard.cgRectValue
         if self.messages.count > 0 && keyBoardDidShow {
             let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-            print(indexPath.item)
             self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
         }
         
@@ -244,8 +243,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        if let videoURL = info[UIImagePickerControllerMediaURL] as? URL {
-            handleSelectVideoFromPicker(videoURL: videoURL)
+        if let videoURL = info[UIImagePickerControllerMediaURL] as? NSURL {
+            handleSelectVideoFromPicker(localVideoURL: videoURL)
         } else {
             handleSelectImageFromPicker(info: info as [String : AnyObject])
         }
@@ -265,21 +264,31 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         if let selectedImage = selectedImageFromPicker  {
             //this blog of code below is used for uploading the image to Firebase's storage then update to the user's database
-            uploadImageToFireBaseStorage(imageToUpload: selectedImage)
+            uploadImageToFireBaseStorage(imageToUpload: selectedImage, completion: { (imageURL) in
+                self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageHeight" : selectedImage.size.height,
+                                                        "imageWidth" : selectedImage.size.width])
+            })
         }
     }
     
-    private func handleSelectVideoFromPicker(videoURL : URL) {
-        let fileName = "videoDemoUpload.mov"
-        let uploadTask = FIRStorage.storage().reference().child(fileName).putFile(videoURL, metadata: nil, completion: { (metadata, error) in
+    //videoURL parameter below is
+    private func handleSelectVideoFromPicker(localVideoURL : NSURL) {
+        let fileName = UUID().uuidString + ".mov"
+        let uploadTask = FIRStorage.storage().reference().child("movie-messages").child(fileName).putFile(localVideoURL as URL, metadata: nil, completion: { (metadata, error) in
             
             if error != nil {
                 print("Fail to upload video", error)
                 return
             }
             
-            if let storageURL = metadata?.downloadURL()?.absoluteString {
-                print(storageURL)
+            //get the URL to video URL on Firebase
+            if let storageVideoURL = metadata?.downloadURL()?.absoluteString {
+                if let thumbnailImage = self.thumbnailImageForLocalVideoMessage(localVideoURL: localVideoURL) {
+                    self.uploadImageToFireBaseStorage(imageToUpload: thumbnailImage, completion: { (imageURL) in
+                        let properties: [String : Any] = ["videoURL" : storageVideoURL, "imageWidth" : thumbnailImage.size.width, "imageHeight" : thumbnailImage.size.height, "imageURL" : imageURL]
+                        self.sendMessagesWithProperties(properties: properties)
+                    })
+                }
             }
         })
         
@@ -292,6 +301,21 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         uploadTask.observe(.success) { (snapshot) in
                 self.navigationItem.title = self.user?.name
         }
+    }
+    
+    private func thumbnailImageForLocalVideoMessage(localVideoURL : NSURL) -> UIImage? {
+        let asset = AVAsset(url: localVideoURL as URL)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        
+        do {
+            let thumbnailCGImage = try imageGenerator.copyCGImage(at: CMTimeMake(1, 60), actualTime: nil)
+            return UIImage(cgImage: thumbnailCGImage)
+        }
+        catch let error {
+            print(error)
+        }
+        
+        return nil
     }
     
     lazy var inputViewContainer : UIView = {
@@ -386,7 +410,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         self.inputsTextField.text = nil
     }
     
-    private func uploadImageToFireBaseStorage(imageToUpload : UIImage) {
+    private func uploadImageToFireBaseStorage(imageToUpload : UIImage, completion: @escaping (_ imageURL: String) -> ()) {
         let imageName = NSUUID().uuidString
         let ref = FIRStorage.storage().reference().child("image_messages").child(imageName)
         
@@ -396,8 +420,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                     print(error)
                 }
                 if let imageURL = metadata?.downloadURL()?.absoluteString {
-                    self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageWidth" : imageToUpload.size.width, "imageHeight" : imageToUpload.size.height])
-                    
+                    completion(imageURL)
                 }
             })
         }
