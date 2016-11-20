@@ -7,10 +7,11 @@
 //
 
 import UIKit
-
+import AVFoundation
 class MessageCell: UICollectionViewCell {
     
     var chatLogController : ChatLogController?
+    var message : Message?
     let textView : UITextView = {
         let tv = UITextView()
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -21,6 +22,37 @@ class MessageCell: UICollectionViewCell {
         tv.isScrollEnabled = false
         return tv
     }()
+    
+    lazy var playButton : UIButton = {
+        let btn = UIButton(type: .system)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        let image = UIImage(named: "play_button")
+        btn.setImage(image, for: .normal)
+        btn.tintColor = UIColor.white
+        btn.addTarget(self, action: #selector(handlePlayVideo), for: .touchUpInside)
+        return btn
+    }()
+    
+    var player : AVPlayer?
+    var playerLayer : AVPlayerLayer?
+    func handlePlayVideo() {
+        if let videoURL = message?.videoURL, let url = URL(string: videoURL) {
+            player = AVPlayer(url: url)
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer?.frame = bubbleView.bounds
+            playerLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
+            messageImageView.layer.addSublayer(playerLayer!)
+            playButton.isHidden = true
+            player?.play()
+            print("Playing Video")
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+    }
     
     let bubbleView : UIView = {
         let view = UIView()
@@ -72,23 +104,25 @@ class MessageCell: UICollectionViewCell {
         self.addSubview(profileImageView)
         bubbleView.addSubview(messageImageView)
         bubbleView.addSubview(textView)
+        bubbleView.addSubview(playButton)
         
-        //needs x,y,width, height as always
+        playButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        playButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         profileImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         
-        //needs x,y,width, height as always
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-//        bubbleView.widthAnchor.constraint(equalToConstant: 200).isActive = true
         bubbleRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
         bubbleRightAnchor?.isActive = true
         bubbleLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor,constant: 8)
         bubbleLeftAnchor?.isActive = true
         
-        //needs x,y,width, height as always
         textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor, constant: -8).isActive = true
         textView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor, constant: 8).isActive = true
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
@@ -97,7 +131,6 @@ class MessageCell: UICollectionViewCell {
         bubbleWidthAnchor = textView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
         
-         //needs x,y,width, height as always
         messageImageView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
         messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
         messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true

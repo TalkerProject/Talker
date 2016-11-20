@@ -126,6 +126,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         cell.messageImageView.isHidden = true
         setupCellUI(cell: cell, message: message)
         cell.chatLogController = self
+        cell.message = message
         cell.textView.text = message.text
         if let text = message.text {
             cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 16
@@ -134,6 +135,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.bubbleView.backgroundColor = UIColor.clear
             cell.bubbleWidthAnchor?.constant = 200
         }
+        
+        cell.playButton.isHidden = message.videoURL == nil
         return cell
     }
     
