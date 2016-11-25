@@ -13,7 +13,7 @@ class SettingController: UIViewController {
     let uid = FIRAuth.auth()?.currentUser?.uid
     let databaseRef = FIRDatabase.database().reference()
     let currentUser = FIRDatabase.database().reference().child("users").child((FIRAuth.auth()?.currentUser?.uid)!)
-    
+    var messagesVC : MessagesController?
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -150,11 +150,13 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
     func handleLogout() {
         do {
             try FIRAuth.auth()?.signOut()
+            messagesVC?.myConnectionRef?.removeValue()
             print("Logout successfully")
         } catch let logoutError {
             print(logoutError)
         }
         let loginController = LoginController()
+        loginController.messagesVC = self.messagesVC
         present(loginController, animated: true, completion: nil)
     }
     

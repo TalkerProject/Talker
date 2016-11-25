@@ -114,6 +114,7 @@ class MessagesController: UITableViewController {
     
     func handleSetting() {
         let settingController = SettingController()
+        settingController.messagesVC = self
         let nav = UINavigationController(rootViewController: settingController)
         present(nav, animated: true, completion: nil)
     }
@@ -121,6 +122,7 @@ class MessagesController: UITableViewController {
     func checkIfUserIsLoggedIn() {
         if FIRAuth.auth()?.currentUser?.uid == nil {
             perform(#selector(handleAutomaticallyLogout), with: nil, afterDelay: 0)
+        
         }
         else {
             fetchUser()
@@ -135,6 +137,7 @@ class MessagesController: UITableViewController {
             if let dictionary = snapshot.value as? [String : AnyObject] {
                 let user = User()
                 user.setValuesForKeys(dictionary)
+                self.handleUserConnectionState()
                 self.setUpNavBar(user: user)
             }
         })
@@ -177,6 +180,27 @@ class MessagesController: UITableViewController {
         let nav = UINavigationController(rootViewController: newMessageController)
         present(nav, animated: true, completion:  nil)
     }
+
+    var myConnectionRef : FIRDatabaseReference?
+    func handleUserConnectionState() {
+        let connectedRef = FIRDatabase.database().reference(withPath: ".info/connected")
+        let usersOnlineRef = FIRDatabase.database().reference().child("users-online")
+        
+        connectedRef.observe(.value, with: { (snapshot) in
+            guard let connected = snapshot.value as? Bool , connected else { return }
+            print("connected")
+            guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+                return
+            }
+            self.myConnectionRef = usersOnlineRef.child(uid)
+            self.myConnectionRef?.onDisconnectRemoveValue()
+            self.myConnectionRef?.setValue(true)
+            
+        }) { (error) in
+            print(error)
+        }
+    }
+    
     
     //call this function when user is not logged in
     func handleAutomaticallyLogout() {
@@ -187,7 +211,7 @@ class MessagesController: UITableViewController {
             print(logoutError)
         }
         let loginController = LoginController()
-        loginController.messageController = self
+        loginController.messagesVC = self
         present(loginController, animated: true, completion: nil)
     }
     

@@ -12,7 +12,6 @@ import BetterSegmentedControl
 
 class LoginController: UIViewController {
     
-    var messageController : MessagesController?
     //the container view to input email and password to login
     let inputsViewContainer: UIView = {
         let view = UIView()
@@ -108,6 +107,7 @@ class LoginController: UIViewController {
         pwTextFieldHeightAnchor?.isActive = true
         
 }
+    var messagesVC : MessagesController?
     func handleLogin() {
         guard let email = emailTextField.text , let pw = pwTextField.text else {
             print("Email and password is not valid")
@@ -118,6 +118,8 @@ class LoginController: UIViewController {
                 print(error)
                 return
             }
+            
+            
             print("Sign in successfully")
             self.dismiss(animated: true, completion: nil)
         })
@@ -156,8 +158,7 @@ class LoginController: UIViewController {
                     print(error)
                     return
                 }
-                print("Save user successfully into FirebaseDB")
-                self.messageController?.fetchUser()
+                self.messagesVC?.fetchUser()
                 self.dismiss(animated: true, completion: nil)
                 
             })

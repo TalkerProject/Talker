@@ -26,14 +26,20 @@ class NewMessageController: UITableViewController {
     }
 
     func setupUI() {
+        
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
         
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         self.navigationItem.title = "Compose Message"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Anonymous", style: .plain, target: self, action: #selector(handleAnonymous))
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
+    }
+    
+    func handleAnonymous() {
+        print("Clicking anonymous")
     }
     
     func handleCancel() {

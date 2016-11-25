@@ -273,7 +273,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             //this blog of code below is used for uploading the image to Firebase's storage then update to the user's database
             uploadImageToFireBaseStorage(imageToUpload: selectedImage, completion: { (imageURL) in
                 self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageHeight" : selectedImage.size.height,
-                                                        "imageWidth" : selectedImage.size.width])
+                                                             "imageWidth" : selectedImage.size.width])
             })
         }
     }
@@ -306,7 +306,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
         
         uploadTask.observe(.success) { (snapshot) in
-                self.navigationItem.title = self.user?.name
+            self.navigationItem.title = self.user?.name
         }
     }
     
@@ -431,7 +431,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 }
             })
         }
-        
     }
 }
 
