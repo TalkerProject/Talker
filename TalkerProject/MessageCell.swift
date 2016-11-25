@@ -19,6 +19,7 @@ class MessageCell: UICollectionViewCell {
     
     weak var delegate : messageCellProtocol?
     var chatLogController : ChatLogController?
+    var anonymousChatLogController : AnonymousChatLogController?
     var message : Message?
     let textView : UITextView = {
         let tv = UITextView()
@@ -101,6 +102,7 @@ class MessageCell: UICollectionViewCell {
         }
         if let imageView = tapGesture.view as? UIImageView {
             self.chatLogController?.performZoomInToViewImageMessage(originalImageView: imageView)
+            self.anonymousChatLogController?.performZoomInToViewImageMessage(originalImageView: imageView)
         }
     }
     

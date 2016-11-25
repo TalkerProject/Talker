@@ -39,7 +39,32 @@ class NewMessageController: UITableViewController {
     }
     
     func handleAnonymous() {
-        print("Clicking anonymous")
+        var onlineUsers = [User]()
+        let onlineUserRef = FIRDatabase.database().reference().child("users-online")
+        let userRef = FIRDatabase.database().reference().child("users")
+        onlineUserRef.observeSingleEvent(of: .childAdded, with: { (snapshot) in
+            let uid = snapshot.key
+            if uid != FIRAuth.auth()?.currentUser?.uid {
+                userRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let dictionary = snapshot.value as? [String : AnyObject] {
+                        let user = User()
+                        user.setValuesForKeys(dictionary)
+                        onlineUsers.append(user)
+                    }
+                })
+            }
+            self.handleShowChatAnonymous(users: &onlineUsers)
+        })
+    }
+    
+    private func handleShowChatAnonymous(users : inout [User]) {
+        users.shuffle()
+        if users.count > 0 {
+            self.messagesController?.showChatController(user: users.first!)
+        }
+        else {
+            print("There is only you on the server")
+        }
     }
     
     func handleCancel() {
@@ -98,4 +123,18 @@ class NewMessageController: UITableViewController {
         self.messagesController?.showChatController(user: user)
     }
 
+}
+
+//I do not know how this works @.@
+extension Array {
+    mutating func shuffle() {
+        if count < 2 { return }
+        
+        for i in startIndex ..< endIndex - 1 {
+            let j = Int(arc4random_uniform(UInt32(endIndex - i))) + i
+            if i != j {
+                swap(&self[i], &self[j])
+            }
+        }
+    }
 }

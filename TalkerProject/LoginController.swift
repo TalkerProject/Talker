@@ -108,6 +108,8 @@ class LoginController: UIViewController {
         
 }
     var messagesVC : MessagesController?
+    var settingVC : SettingController?
+    
     func handleLogin() {
         guard let email = emailTextField.text , let pw = pwTextField.text else {
             print("Email and password is not valid")
@@ -119,9 +121,9 @@ class LoginController: UIViewController {
                 return
             }
             
-            
             print("Sign in successfully")
             self.dismiss(animated: true, completion: nil)
+            self.settingVC?.dismiss(animated: true, completion: nil)
         })
     }
     
@@ -160,7 +162,7 @@ class LoginController: UIViewController {
                 }
                 self.messagesVC?.fetchUser()
                 self.dismiss(animated: true, completion: nil)
-                
+                self.settingVC?.dismiss(animated: true, completion: nil)
             })
         })
     }

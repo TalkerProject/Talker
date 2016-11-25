@@ -16,6 +16,7 @@
 		E34B26711DB4A9C9002F4598 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E34B26701DB4A9C9002F4598 /* Assets.xcassets */; };
 		E34B26741DB4A9C9002F4598 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E34B26721DB4A9C9002F4598 /* LaunchScreen.storyboard */; };
 		E37EEC9C1DCB905A003D3498 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37EEC9B1DCB9059003D3498 /* MessageCell.swift */; };
+		E39563E51DE8E842003AAAED /* AnonymousChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39563E41DE8E842003AAAED /* AnonymousChatLogController.swift */; };
 		E3CBA98B1DE1E6BC00F20405 /* FirebaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CBA98A1DE1E6BC00F20405 /* FirebaseClient.swift */; };
 		E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B741DBB16D7000961DE /* NewMessageController.swift */; };
 		E3D64B791DBB519A000961DE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B781DBB519A000961DE /* User.swift */; };
@@ -40,6 +41,7 @@
 		E34B26731DB4A9C9002F4598 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E34B26751DB4A9C9002F4598 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E37EEC9B1DCB9059003D3498 /* MessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
+		E39563E41DE8E842003AAAED /* AnonymousChatLogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnonymousChatLogController.swift; sourceTree = "<group>"; };
 		E3CBA98A1DE1E6BC00F20405 /* FirebaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseClient.swift; sourceTree = "<group>"; };
 		E3D64B741DBB16D7000961DE /* NewMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		E3D64B781DBB519A000961DE /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				E3271C8C1DB5FEF700F98EDD /* LoginController.swift */,
 				E3D64B841DBD31EB000961DE /* SettingController.swift */,
 				E3E23C651DC1DA8B00C6AE8C /* ChatLogController.swift */,
+				E39563E41DE8E842003AAAED /* AnonymousChatLogController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -313,6 +316,7 @@
 				E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */,
 				E3271C8D1DB5FEF700F98EDD /* LoginController.swift in Sources */,
 				E3CBA98B1DE1E6BC00F20405 /* FirebaseClient.swift in Sources */,
+				E39563E51DE8E842003AAAED /* AnonymousChatLogController.swift in Sources */,
 				E3D64B791DBB519A000961DE /* User.swift in Sources */,
 				E34B266A1DB4A9C9002F4598 /* AppDelegate.swift in Sources */,
 				E3D64B851DBD31EB000961DE /* SettingController.swift in Sources */,

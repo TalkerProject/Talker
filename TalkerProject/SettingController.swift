@@ -157,6 +157,7 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
         }
         let loginController = LoginController()
         loginController.messagesVC = self.messagesVC
+        loginController.settingVC = self
         present(loginController, animated: true, completion: nil)
     }
     

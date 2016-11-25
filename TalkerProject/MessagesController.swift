@@ -188,10 +188,7 @@ class MessagesController: UITableViewController {
         
         connectedRef.observe(.value, with: { (snapshot) in
             guard let connected = snapshot.value as? Bool , connected else { return }
-            print("connected")
-            guard let uid = FIRAuth.auth()?.currentUser?.uid else {
-                return
-            }
+            guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
             self.myConnectionRef = usersOnlineRef.child(uid)
             self.myConnectionRef?.onDisconnectRemoveValue()
             self.myConnectionRef?.setValue(true)
