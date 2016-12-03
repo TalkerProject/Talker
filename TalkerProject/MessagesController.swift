@@ -136,6 +136,7 @@ class MessagesController: UITableViewController {
         FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             if let dictionary = snapshot.value as? [String : AnyObject] {
                 let user = User()
+                
                 user.setValuesForKeys(dictionary)
                 self.handleUserConnectionState()
                 self.setUpNavBar(user: user)
@@ -187,6 +188,7 @@ class MessagesController: UITableViewController {
         let usersOnlineRef = FIRDatabase.database().reference().child("users-online")
         
         connectedRef.observe(.value, with: { (snapshot) in
+            
             guard let connected = snapshot.value as? Bool , connected else { return }
             guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
             self.myConnectionRef = usersOnlineRef.child(uid)

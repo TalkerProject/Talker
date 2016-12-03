@@ -84,7 +84,7 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
             if let uploadData = UIImageJPEGRepresentation(selectedImage,0.1) {
                 storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                     if error != nil {
-                        print(error)
+                        print(error!)
                         return
                     }
                     print("Upload to storage successfully")
@@ -93,7 +93,7 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
                         let values = ["profileImageURL" : profileImageURL]
                         currentUser.updateChildValues(values, withCompletionBlock: { (error, ref) in
                             if error != nil {
-                                print(error)
+                                print(error!)
                                 return
                             }
                         })
