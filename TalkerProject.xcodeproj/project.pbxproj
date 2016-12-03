@@ -194,7 +194,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Nguyen Duc Gia Bao";
 				TargetAttributes = {
 					E34B26651DB4A9C9002F4598 = {

@@ -117,7 +117,7 @@ class LoginController: UIViewController {
         }
         FIRAuth.auth()?.signIn(withEmail: email, password: pw, completion: { (user, error) in
             if (error != nil) {
-                print(error)
+                print(error!)
                 return
             }
             
@@ -143,7 +143,7 @@ class LoginController: UIViewController {
         
         FIRAuth.auth()?.createUser(withEmail: email, password: pw, completion: { (user: FIRUser?, error) in
             if error != nil {
-                print(error)
+                print(error!)
                 return
             }
             guard let uid = user?.uid else {
@@ -157,7 +157,7 @@ class LoginController: UIViewController {
             let userReference = ref.child("users").child(uid)
             userReference.updateChildValues(values, withCompletionBlock: { (error, ref : FIRDatabaseReference?) in
                 if error != nil {
-                    print(error)
+                    print(error!)
                     return
                 }
                 self.messagesVC?.fetchUser()

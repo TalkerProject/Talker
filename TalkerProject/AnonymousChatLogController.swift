@@ -284,7 +284,7 @@ class AnonymousChatLogController : UICollectionViewController, UITextFieldDelega
         let uploadTask = FIRStorage.storage().reference().child("movie-messages").child(fileName).putFile(localVideoURL as URL, metadata: nil, completion: { (metadata, error) in
             
             if error != nil {
-                print("Fail to upload video", error)
+                print("Fail to upload video", error!)
                 return
             }
             
@@ -406,7 +406,7 @@ class AnonymousChatLogController : UICollectionViewController, UITextFieldDelega
         
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
-                print(error)
+                print(error!)
                 return
             }
             
@@ -424,7 +424,7 @@ class AnonymousChatLogController : UICollectionViewController, UITextFieldDelega
         if let uploadData = UIImageJPEGRepresentation(imageToUpload, 0.2) {
             ref.put(uploadData, metadata: nil, completion: { (metadata, error) in
                 if error != nil {
-                    print(error)
+                    print(error!)
                 }
                 if let imageURL = metadata?.downloadURL()?.absoluteString {
                     completion(imageURL)
