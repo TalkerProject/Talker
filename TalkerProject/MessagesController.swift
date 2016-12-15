@@ -175,6 +175,12 @@ class MessagesController: UITableViewController {
         self.navigationController?.pushViewController(chatLogController, animated: true)
     }
     
+    func showAnonymousChatController(user : User){
+        let anonymousChatController = AnonymousChatController(collectionViewLayout: UICollectionViewLayout())
+        anonymousChatController.user = user
+        self.navigationController?.pushViewController(anonymousChatController, animated: true)
+    }
+    
     func handleNewMessage() {
         let newMessageController = NewMessageController()
         newMessageController.messagesController = self

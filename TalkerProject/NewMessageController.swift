@@ -13,23 +13,38 @@ import AFNetworking
 class NewMessageController: UITableViewController {
     var users = [User]()
     let cellID = "newMessageCell"
-    
+    var onlineUsersID = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+//        observeOnlineUsers()
         tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
     }
+    
+//    private func observeOnlineUsers() {
+//        let onlineUserRef = FIRDatabase.database().reference().child("users-online")
+//        onlineUserRef.observe(.childAdded, with: { snapshot in
+//            let userID = snapshot.key
+//            if userID != FIRAuth.auth()?.currentUser?.uid {
+//               self.onlineUsersID.append(userID)
+//            }
+//        })
+//        onlineUserRef.observe(.childRemoved, with: { snapshot in
+//            let userID = snapshot.key
+//            if userID != FIRAuth.auth()?.currentUser?.uid {
+//                self.onlineUsersID.remove(at: self.onlineUsersID.index(of: userID)!)
+//            }
+//        })
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         fetchUsersMessages()
     }
-
+    
     func setupUI() {
-        
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
-        
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         self.navigationItem.title = "Compose Message"
@@ -39,32 +54,29 @@ class NewMessageController: UITableViewController {
     }
     
     func handleAnonymous() {
-        var onlineUsers = [User]()
-        let onlineUserRef = FIRDatabase.database().reference().child("users-online")
-        let userRef = FIRDatabase.database().reference().child("users")
-        onlineUserRef.observeSingleEvent(of: .childAdded, with: { (snapshot) in
-            let uid = snapshot.key
-            if uid != FIRAuth.auth()?.currentUser?.uid {
-                userRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let dictionary = snapshot.value as? [String : AnyObject] {
-                        let user = User()
-                        user.setValuesForKeys(dictionary)
-                        onlineUsers.append(user)
-                    }
-                })
-            }
-            self.handleShowChatAnonymous(users: &onlineUsers)
-        })
+//        var array = onlineUsersID
+//        array.shuffle()
+//        let userRef = FIRDatabase.database().reference().child("users")
+//        if (array.count > 0) {
+//            userRef.child(array[0]).observeSingleEvent(of: .value, with: { (snapshot) in
+//                if let dictionary = snapshot.value as? [String : AnyObject] {
+//                    let user = User()
+//                    user.setValuesForKeys(dictionary)
+//                    self.handleShowChatAnonymous(user: user)
+//                }
+//            })
+//        }
+//        else {
+//            //TODO: Show an alert illustrating there is no one else except on the server
+//            print("Only you on the server")
+//        }
+        let user = User()
+        handleShowChatAnonymous(user: user)
     }
     
-    private func handleShowChatAnonymous(users : inout [User]) {
-        users.shuffle()
-        if users.count > 0 {
-            self.messagesController?.showChatController(user: users.first!)
-        }
-        else {
-            print("There is only you on the server")
-        }
+    private func handleShowChatAnonymous(user : User) {
+        dismiss(animated: true, completion: nil)
+        self.messagesController?.showAnonymousChatController(user: user)
     }
     
     func handleCancel() {
@@ -83,12 +95,12 @@ class NewMessageController: UITableViewController {
                 user.id = snapshot.key
                 
                 //if app crashes. Lets use dispatch_async
-                DispatchQueue.main.async(execute: { 
+                DispatchQueue.main.async(execute: {
                     self.tableView.reloadData()
-
+                    
                 })
             }
-            }, withCancel: nil)
+        }, withCancel: nil)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -106,7 +118,7 @@ class NewMessageController: UITableViewController {
         if let profileImageURL = user.profileImageURL {
             cell.profileImageView.setImageWith(URL(string: profileImageURL)!)
         }
-
+        
         cell.textLabel?.text = name
         cell.detailTextLabel?.text = email
         return cell
@@ -122,7 +134,7 @@ class NewMessageController: UITableViewController {
         let user = users[indexPath.row]
         self.messagesController?.showChatController(user: user)
     }
-
+    
 }
 
 //I do not know how this works @.@

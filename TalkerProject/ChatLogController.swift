@@ -193,27 +193,30 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         // added by Eastern Neverlose
         
         // check if this message if a special message
-        if specialMessagefilter(message: message.text!) {
-            cell.textView.text = "📞 video called"
-            
-            // check if this message is new, sent less than 1 minute by now
-            // also check who send this message. if sent by you, you cannot touch it to answer
-            let isFromSender = message.fromID == FIRAuth.auth()?.currentUser?.uid
-            if checkTimestamp(time: message.timeStamp!) && !isFromSender {
-                cell.textView.text = "📞 calling you, tap to answer"
-                // add gesture to it, so we can click to this message
-                // and to straight to videoCallController
-                cell.textView.isUserInteractionEnabled = true
-                let tap = UITapGestureRecognizer(target: self, action: #selector(VideoCallMessageTouched))
-                cell.textView.addGestureRecognizer(tap)
-                var mes = message.text!
+        
+        if message.text != nil {
+            if specialMessagefilter(message: message.text!) {
+                cell.textView.text = "📞 video called"
                 
-                mes.characters.popFirst()
-                mes.characters.popLast()
-                chatID = mes
+                // check if this message is new, sent less than 1 minute by now
+                // also check who send this message. if sent by you, you cannot touch it to answer
+                let isFromSender = message.fromID == FIRAuth.auth()?.currentUser?.uid
+                if checkTimestamp(time: message.timeStamp!) && !isFromSender {
+                    cell.textView.text = "📞 calling you, tap to answer"
+                    // add gesture to it, so we can click to this message
+                    // and to straight to videoCallController
+                    cell.textView.isUserInteractionEnabled = true
+                    let tap = UITapGestureRecognizer(target: self, action: #selector(VideoCallMessageTouched))
+                    cell.textView.addGestureRecognizer(tap)
+                    var mes = message.text!
+                    
+                    mes.characters.popFirst()
+                    mes.characters.popLast()
+                    chatID = mes
+                }
+            } else {
+                cell.textView.text = message.text!
             }
-        } else {
-            cell.textView.text = message.text!
         }
         
         if let text = message.text {

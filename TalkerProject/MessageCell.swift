@@ -19,7 +19,7 @@ class MessageCell: UICollectionViewCell {
     
     weak var delegate : messageCellProtocol?
     var chatLogController : ChatLogController?
-    var anonymousChatLogController : AnonymousChatLogController?
+    var anonymousChatLogController : AnonymousChatController?
     var message : Message?
     let textView : UITextView = {
         let tv = UITextView()
@@ -132,8 +132,8 @@ class MessageCell: UICollectionViewCell {
 //        activityIndicatorView.widthAnchor.constraint(equalToConstant: 40).isActive = true
 //        activityIndicatorView.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
-        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
-        profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 0).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         profileImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         

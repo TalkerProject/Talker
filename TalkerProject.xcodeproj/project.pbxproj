@@ -19,7 +19,6 @@
 		E34B26741DB4A9C9002F4598 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E34B26721DB4A9C9002F4598 /* LaunchScreen.storyboard */; };
 		E37EEC9C1DCB905A003D3498 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37EEC9B1DCB9059003D3498 /* MessageCell.swift */; };
 		E39563E51DE8E842003AAAED /* AnonymousChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39563E41DE8E842003AAAED /* AnonymousChatLogController.swift */; };
-		E3CBA98B1DE1E6BC00F20405 /* FirebaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CBA98A1DE1E6BC00F20405 /* FirebaseClient.swift */; };
 		E3D64B751DBB16D7000961DE /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B741DBB16D7000961DE /* NewMessageController.swift */; };
 		E3D64B791DBB519A000961DE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B781DBB519A000961DE /* User.swift */; };
 		E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D64B7C1DBB6519000961DE /* UserCell.swift */; };
@@ -46,7 +45,6 @@
 		E34B26751DB4A9C9002F4598 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E37EEC9B1DCB9059003D3498 /* MessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		E39563E41DE8E842003AAAED /* AnonymousChatLogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnonymousChatLogController.swift; sourceTree = "<group>"; };
-		E3CBA98A1DE1E6BC00F20405 /* FirebaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseClient.swift; sourceTree = "<group>"; };
 		E3D64B741DBB16D7000961DE /* NewMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		E3D64B781DBB519A000961DE /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E3D64B7C1DBB6519000961DE /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
@@ -112,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				E3CBA9891DE1E66000F20405 /* Helpers */,
-				E3CBA9881DE1E65400F20405 /* Stores */,
 				E3D64B771DBB5162000961DE /* Views */,
 				E3D64B761DBB515D000961DE /* Models */,
 				E3271C901DB892C600F98EDD /* TalkerProject.entitlements */,
@@ -125,14 +122,6 @@
 				E34B26751DB4A9C9002F4598 /* Info.plist */,
 			);
 			path = TalkerProject;
-			sourceTree = "<group>";
-		};
-		E3CBA9881DE1E65400F20405 /* Stores */ = {
-			isa = PBXGroup;
-			children = (
-				E3CBA98A1DE1E6BC00F20405 /* FirebaseClient.swift */,
-			);
-			name = Stores;
 			sourceTree = "<group>";
 		};
 		E3CBA9891DE1E66000F20405 /* Helpers */ = {
@@ -205,7 +194,7 @@
 				TargetAttributes = {
 					E34B26651DB4A9C9002F4598 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = HMJT6383M2;
+						DevelopmentTeam = LEH8XEP9K4;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
@@ -323,7 +312,6 @@
 				E3E23C681DC3327000C6AE8C /* Message.swift in Sources */,
 				E3D64B7D1DBB6519000961DE /* UserCell.swift in Sources */,
 				E3271C8D1DB5FEF700F98EDD /* LoginController.swift in Sources */,
-				E3CBA98B1DE1E6BC00F20405 /* FirebaseClient.swift in Sources */,
 				E39563E51DE8E842003AAAED /* AnonymousChatLogController.swift in Sources */,
 				E3D64B791DBB519A000961DE /* User.swift in Sources */,
 				E34B266A1DB4A9C9002F4598 /* AppDelegate.swift in Sources */,
@@ -453,12 +441,12 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = TalkerProject/TalkerProject.entitlements;
-				DEVELOPMENT_TEAM = HMJT6383M2;
+				DEVELOPMENT_TEAM = LEH8XEP9K4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = TalkerProject/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = trieulieuf9.TalkerProject;
+				PRODUCT_BUNDLE_IDENTIFIER = RMITUniversity.TalkerProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -472,12 +460,12 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = TalkerProject/TalkerProject.entitlements;
-				DEVELOPMENT_TEAM = HMJT6383M2;
+				DEVELOPMENT_TEAM = LEH8XEP9K4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = TalkerProject/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = trieulieuf9.TalkerProject;
+				PRODUCT_BUNDLE_IDENTIFIER = RMITUniversity.TalkerProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;

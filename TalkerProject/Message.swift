@@ -34,5 +34,4 @@ class Message : NSObject {
         self.imageHeight = dictionary["imageHeight"] as? NSNumber
         self.videoURL = dictionary["videoURL"] as? String
     }
-    
 }
