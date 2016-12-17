@@ -19,7 +19,6 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     var user : User? {
         didSet {
             self.navigationItem.title = "Anonymous User"
-            //            observeMessages()
         }
     }
     var messages = [Message]()
@@ -34,7 +33,6 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         //get the number of channel
         anonymousChannelRef.observeSingleEvent(of: .value, with: { (snapshot) in
             self.channelCount = Int(snapshot.childrenCount)
-//            print(snapshot.childrenCount)
             if (self.channelCount == 0) {
                 self.setupChannel()
             }
@@ -45,8 +43,6 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
                         return
                     }
                     count += 1
-                    print(dictionary.count)
-                    print(snapshot)
                     if !didFindChannel && dictionary.count == 1 {
                         self.availableChannel = snapshot.key
                         self.connectToChannel()
@@ -76,6 +72,30 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         pairingWithStranger(channelRef: channelRef)
     }
     
+    func observeMessages() {
+        guard let toID = user?.id else {
+            return
+        }
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(userID!).child(toID)
+        userMessagesRef.observe(.childAdded, with: { (snapshot) in
+            print("Received new message")
+            let messageID = snapshot.key
+            let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
+            messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dictionary = snapshot.value as? [String : AnyObject] else {
+                    return
+                }
+                let message = Message(dictionary: dictionary)
+                if message.getChatID() == self.user?.id {
+                    self.messages.append(message)
+                }
+                self.timer?.invalidate()
+                self.timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.handleReloadCollectionView), userInfo: nil, repeats: false)
+                
+            }, withCancel: nil)
+        }, withCancel: nil)
+    }
+    
     func pairingWithStranger(channelRef : FIRDatabaseReference) {
         channelRef.observeSingleEvent(of: .value, with: { snapshot in
             guard let dictionary = snapshot.value as? [String : AnyObject] else {
@@ -95,7 +115,6 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
                 
                 (dictionary["Second"] as! String == self.userID!) ? (chatID = dictionary["First"] as! String) : (chatID = dictionary["Second"] as! String)
                 self.findChatPartnerByID(userID: chatID)
-                
             }
         })
     }
@@ -107,12 +126,9 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
                 return
             }
             self.user?.setValuesForKeys(dictionary)
+            self.user?.id = snapshot.key
+            self.observeMessages()
         })
-
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        removeChannel()
     }
     
     func removeChannel() {
@@ -127,31 +143,6 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
             })
         }
     }
-    
-    //    func observeMessages() {
-    //        guard let userID = FIRAuth.auth()?.currentUser?.uid, let toID = user?.id else {
-    //            return
-    //        }
-    //        let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(userID).child(toID)
-    //        userMessagesRef.observe(.childAdded, with: { (snapshot) in
-    //            let messageID = snapshot.key
-    //            let messageRef = FIRDatabase.database().reference().child("messages").child(messageID)
-    //            messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
-    //                guard let dictionary = snapshot.value as? [String : AnyObject] else {
-    //                    return
-    //                }
-    //                let message = Message(dictionary: dictionary)
-    //
-    //                if message.getChatID() == self.user?.id {
-    //                    self.messages.append(message)
-    //                }
-    //
-    //                self.timer?.invalidate()
-    //                self.timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.handleReloadCollectionView), userInfo: nil, repeats: false)
-    //
-    //                }, withCancel: nil)
-    //            }, withCancel: nil)
-    //    }
     
     func handleReloadCollectionView() {
         DispatchQueue.main.async(execute: {
@@ -179,11 +170,23 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.keyboardDismissMode = .interactive
+        
+        NotificationCenter.default.addObserver(forName: APP_TERMINATE, object: nil, queue: nil, using: { (notification) in
+            self.removeChannel()
+            
+        })
         lookingForChannel()
         hideKeyboard()
-        //        setupInputsContainer()
         setupKeyBoard()
+
+        //        setupInputsContainer()
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        removeChannel()
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     
     func setupKeyBoard() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleShowKeyBoard), name: .UIKeyboardDidShow, object: nil)
@@ -220,7 +223,9 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     
     //NEED TO ADD function VIEWWILLTRANSITION TO HANDLE WHEN ROTATE THE SCREEN HORIZONTALLY
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        print("HERE")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MessageCell
+        
         let message = messages[indexPath.item]
         cell.messageImageView.isHidden = true
         setupCellUI(cell: cell, message: message)
@@ -228,6 +233,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         cell.message = message
         cell.delegate = self
         cell.textView.text = message.text
+        
         if let text = message.text {
             cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 16
         }
@@ -488,9 +494,8 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         let childRef = ref.childByAutoId()
         let toID = user?.id
         let fromID = FIRAuth.auth()?.currentUser?.uid
-        let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
         
-        var values : [String : Any] = ["toID" : toID!, "fromID" : fromID!, "timeStamp" : timeStamp]
+        var values : [String : Any] = ["toID" : toID!, "fromID" : fromID!]
         
         for key in properties.keys {
             values[key] = properties[key]

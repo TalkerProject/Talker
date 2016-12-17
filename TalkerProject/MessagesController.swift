@@ -176,7 +176,7 @@ class MessagesController: UITableViewController {
     }
     
     func showAnonymousChatController(user : User){
-        let anonymousChatController = AnonymousChatController(collectionViewLayout: UICollectionViewLayout())
+        let anonymousChatController = AnonymousChatController(collectionViewLayout: UICollectionViewFlowLayout())
         anonymousChatController.user = user
         self.navigationController?.pushViewController(anonymousChatController, animated: true)
     }
@@ -186,6 +186,7 @@ class MessagesController: UITableViewController {
         newMessageController.messagesController = self
         let nav = UINavigationController(rootViewController: newMessageController)
         present(nav, animated: true, completion:  nil)
+        
     }
 
     var myConnectionRef : FIRDatabaseReference?

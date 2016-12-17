@@ -22,22 +22,6 @@ class NewMessageController: UITableViewController {
         tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
     }
     
-//    private func observeOnlineUsers() {
-//        let onlineUserRef = FIRDatabase.database().reference().child("users-online")
-//        onlineUserRef.observe(.childAdded, with: { snapshot in
-//            let userID = snapshot.key
-//            if userID != FIRAuth.auth()?.currentUser?.uid {
-//               self.onlineUsersID.append(userID)
-//            }
-//        })
-//        onlineUserRef.observe(.childRemoved, with: { snapshot in
-//            let userID = snapshot.key
-//            if userID != FIRAuth.auth()?.currentUser?.uid {
-//                self.onlineUsersID.remove(at: self.onlineUsersID.index(of: userID)!)
-//            }
-//        })
-//    }
-    
     override func viewWillAppear(_ animated: Bool) {
         fetchUsersMessages()
     }
@@ -54,22 +38,6 @@ class NewMessageController: UITableViewController {
     }
     
     func handleAnonymous() {
-//        var array = onlineUsersID
-//        array.shuffle()
-//        let userRef = FIRDatabase.database().reference().child("users")
-//        if (array.count > 0) {
-//            userRef.child(array[0]).observeSingleEvent(of: .value, with: { (snapshot) in
-//                if let dictionary = snapshot.value as? [String : AnyObject] {
-//                    let user = User()
-//                    user.setValuesForKeys(dictionary)
-//                    self.handleShowChatAnonymous(user: user)
-//                }
-//            })
-//        }
-//        else {
-//            //TODO: Show an alert illustrating there is no one else except on the server
-//            print("Only you on the server")
-//        }
         let user = User()
         handleShowChatAnonymous(user: user)
     }
