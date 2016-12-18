@@ -158,9 +158,8 @@ class MessagesController: UITableViewController {
                                                                                          NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)!])
         nameLabel.attributedText = myMutableString
         nameLabel.textAlignment = .center
-        
         titleView.addSubview(nameLabel)
-        
+
         nameLabel.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
         nameLabel.rightAnchor.constraint(equalTo: titleView.rightAnchor).isActive = true
         nameLabel.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
@@ -195,7 +194,6 @@ class MessagesController: UITableViewController {
         let usersOnlineRef = FIRDatabase.database().reference().child("users-online")
         
         connectedRef.observe(.value, with: { (snapshot) in
-            
             guard let connected = snapshot.value as? Bool , connected else { return }
             guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
             self.myConnectionRef = usersOnlineRef.child(uid)

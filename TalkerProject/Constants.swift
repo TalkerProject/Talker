@@ -9,3 +9,4 @@
 import Foundation
 
 let APP_TERMINATE = NSNotification.Name("AppTerminate")
+let USER_OFFLINE = NSNotification.Name("useroffline")
