@@ -208,8 +208,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                     cell.textView.addGestureRecognizer(tap)
                     var mes = message.text!
                     
-                    mes.characters.popFirst()
-                    mes.characters.popLast()
+                    _ = mes.characters.popFirst()
+                    _ = mes.characters.popLast()
                     chatID = mes
                 }
             } else {
