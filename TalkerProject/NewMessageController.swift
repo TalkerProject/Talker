@@ -32,9 +32,10 @@ class NewMessageController: UITableViewController {
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         self.navigationItem.title = "Compose Message"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Anonymous", style: .plain, target: self, action: #selector(handleAnonymous))
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
+        let rightBarButtonImage = UIImage(named: "anonymous")?.withRenderingMode(.alwaysOriginal)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleAnonymous))
+        let leftBarButtonImage = UIImage(named: "back_button")?.withRenderingMode(.alwaysOriginal)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftBarButtonImage, style: .plain, target: self, action: #selector(handleCancel))
     }
     
     func handleAnonymous() {

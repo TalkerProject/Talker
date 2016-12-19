@@ -33,13 +33,27 @@ class SettingController: UIViewController {
         return table
     }()
     
+    let subView : UILabel = {
+        let lb = UILabel()
+        lb.backgroundColor = UIColor(r: 244, g: 66, b: 66)
+        lb.text = "TALKERS TEAM © all rights reserved"
+        lb.textColor = UIColor.white
+        lb.textAlignment = .center
+        
+        lb.translatesAutoresizingMaskIntoConstraints = false
+        return lb
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(profileImageView)
+        view.addSubview(subView)
+        
+
 //        view.addSubview(tableView)
 //        tableView.delegate = self
 //        tableView.dataSource = self
-        setupProfileImageViewConstraints()
+        setupConstraints()
 //        setupTableViewConstraints()
         
     }
@@ -130,8 +144,10 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
         self.navigationItem.title = "Settings"
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
+        let leftBarButtonImage = UIImage(named: "logout_button")?.withRenderingMode(.alwaysOriginal)
+        let rightBarButtonImage = UIImage(named: "cancel_button")?.withRenderingMode(.alwaysOriginal)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftBarButtonImage, style: .plain, target: self, action: #selector(handleLogout))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleCancel))
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -161,12 +177,17 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
         present(loginController, animated: true, completion: nil)
     }
     
-    func setupProfileImageViewConstraints() {
+    func setupConstraints() {
         //also needs x,y, width and height for autolayout
         profileImageView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 30).isActive = true
         profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        
+        subView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        subView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        subView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        subView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
     }
     
     func setupTableViewConstraints() {

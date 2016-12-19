@@ -97,6 +97,9 @@ class MessagesController: UITableViewController {
             }, withCancel: nil)
     }
     
+    
+    
+    
     func setupUI() {
         let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
         let leftBarButtonImage = UIImage(named: "setting")?.withRenderingMode(.alwaysOriginal)
@@ -110,7 +113,8 @@ class MessagesController: UITableViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleNewMessage))
         //        self.navigationItem.rightBarButtonItem?.tintColor = UIColor.white
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftBarButtonImage,style: .plain, target: self, action: #selector(handleSetting))
-    }
+        
+        }
     
     func handleSetting() {
         let settingController = SettingController()
@@ -218,6 +222,8 @@ class MessagesController: UITableViewController {
         loginController.messagesVC = self
         present(loginController, animated: true, completion: nil)
     }
+
+    
     
 }
 

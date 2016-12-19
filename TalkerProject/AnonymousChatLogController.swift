@@ -13,8 +13,10 @@ import MobileCoreServices
 import AVFoundation
 import AVKit
 
+
 class AnonymousChatController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let cellID = "cellCollectionID"
+    var spinnerActivity : MBProgressHUD!
     let anonymousChannelRef = FIRDatabase.database().reference().child("channel")
     var user : User? {
         didSet {
@@ -28,6 +30,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     let userID = FIRAuth.auth()?.currentUser?.uid
     
     func lookingForChannel() {
+        showHUD()
         var didFindChannel = false
         //get the number of channel
         anonymousChannelRef.observeSingleEvent(of: .value, with: { (snapshot) in
@@ -54,14 +57,17 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
                     }
                 })
             }
-           
+            
         })
     }
+    
+    
     
     func connectToChannel() {
         let channelRef = anonymousChannelRef.child(connectedChannel)
         channelRef.child("users").setValue(2)
         //        pairingWithStranger(channelRef: channelRef)
+        hideHUD()
         self.observeMessages()
         self.handleAppTerminated()
         self.handleChannelTerminated()
@@ -72,6 +78,12 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         connectedChannel = channelRef.key
         channelRef.child("users").setValue(1)
         //        pairingWithStranger(channelRef: channelRef)
+        
+        channelRef.observe(.childChanged, with: { (snapshot) in
+            if snapshot.value as? Int == 2 {
+                self.hideHUD()
+            }
+        })
         self.observeMessages()
         self.handleAppTerminated()
         self.handleChannelTerminated()
@@ -79,7 +91,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     
     func handleChannelTerminated() {
         anonymousChannelRef.child(connectedChannel).observe(.childRemoved, with: { snapshot in
-           _ = self.navigationController?.popViewController(animated: true)
+            _ = self.navigationController?.popViewController(animated: true)
         })
     }
     
@@ -157,6 +169,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.keyboardDismissMode = .interactive
+        self.navigationController?.navigationBar.tintColor = UIColor.white
         lookingForChannel()
         hideKeyboard()
         setupKeyBoard()
@@ -164,7 +177,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         //        setupInputsContainer()
     }
     
-  
+    
     
     var inImagePicker = false
     override func viewDidDisappear(_ animated: Bool) {
@@ -550,6 +563,35 @@ extension AnonymousChatController : messageCellProtocol {
         playerVC.player = player
         present(playerVC, animated: true, completion: nil)
     }
+}
+
+extension AnonymousChatController {
+    
+    func showHUD() {
+        spinnerActivity = MBProgressHUD.showAdded(to: self.view, animated: true)
+        spinnerActivity.label.text = "Matching a new user..."
+        spinnerActivity.mode = MBProgressHUDMode.indeterminate
+        spinnerActivity.button.setTitle("Cancel", for: .normal)
+        spinnerActivity.button.addTarget(self, action: #selector(handleCancelOnHUD), for: .touchUpInside)
+        spinnerActivity.button.isUserInteractionEnabled = true
+        self.inputAccessoryView?.isUserInteractionEnabled = false
+    }
+    
+    func hideHUD() {
+        self.spinnerActivity.mode = MBProgressHUDMode.customView
+        self.spinnerActivity.customView = UIImageView(image: UIImage(named: "checkmark"))
+        self.spinnerActivity.label.text = "Matched !!!"
+        self.spinnerActivity.hide(animated: true, afterDelay: 2)
+        self.view.isUserInteractionEnabled = true
+        self.inputAccessoryView?.isUserInteractionEnabled = true
+
+    }
+    
+    func handleCancelOnHUD() {
+        removeChannel()
+        handleChannelTerminated()
+    }
+    
 }
 
 //    func pairingWithStranger(channelRef : FIRDatabaseReference) {
