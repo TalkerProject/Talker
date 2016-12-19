@@ -141,6 +141,7 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
         
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
+        self.navigationController?.navigationBar.isTranslucent = false
         self.navigationItem.title = "Settings"
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         
@@ -150,14 +151,14 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleCancel))
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
-    }
-    
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return 5
+//    }
+//    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        return UITableViewCell()
+//    }
+//    
     
     func handleCancel() {
         dismiss(animated: true, completion: nil)

@@ -90,9 +90,11 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     }
     
     func handleChannelTerminated() {
-        anonymousChannelRef.child(connectedChannel).observe(.childRemoved, with: { snapshot in
-            _ = self.navigationController?.popViewController(animated: true)
-        })
+        if (connectedChannel != "") {
+            anonymousChannelRef.child(connectedChannel).observe(.childRemoved, with: { snapshot in
+                _ = self.navigationController?.popViewController(animated: true)
+            })
+        }
     }
     
     func handleAppTerminated(){
