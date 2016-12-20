@@ -293,7 +293,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "function removeHeaders() {\n    find $BUILD_ROOT/Debug-iphoneos/  -name '*.h' -exec rm -f {} \\;\n}\nremoveHeaders";
+			shellScript = "function removeHeaders() {\n    find $BUILD_ROOT/Debug-iphonesimulator/  -name '*.h' -exec rm -f {} \\;\n}\nremoveHeaders";
 		};
 		FD5F33A1E25C116E1F5D59EC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

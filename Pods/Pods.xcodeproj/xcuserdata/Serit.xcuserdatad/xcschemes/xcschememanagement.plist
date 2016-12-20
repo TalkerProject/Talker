@@ -24,6 +24,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>PulsingHalo.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -37,12 +42,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1F43BEDA234061B5676DBBF990E9D951</key>
+		<key>1E43E674B70CD375CB483AFE692F529B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>3C068A58B0DECF71FC3B64A1C1B68BBC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E0797EB85B9AEBCC67066365E96D0F45</key>
 		<dict>
 			<key>primary</key>
 			<true/>

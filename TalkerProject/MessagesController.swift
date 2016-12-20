@@ -8,22 +8,23 @@
 
 import UIKit
 import Firebase
+import PulsingHalo
 class MessagesController: UIViewController {
     let profileImageViewNavBar = UIImageView()
-//    var messagesDict = [String : Message]()
-//    
-//    var messages = [Message]()
+    //    var messagesDict = [String : Message]()
+    //
+    //    var messages = [Message]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         setupUI()
         checkIfUserIsLoggedIn()
-//        observeUserMessages()
-//        tableView.register(UserCell.self, forCellReuseIdentifier: "cellID")
+        //        observeUserMessages()
+        //        tableView.register(UserCell.self, forCellReuseIdentifier: "cellID")
     }
     var timer : Timer?
     
@@ -37,7 +38,16 @@ class MessagesController: UIViewController {
         return lb
     }()
     
-    
+    lazy var searchButton: UIButton = {
+        let btn = UIButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleNewMessage)))
+        btn.isUserInteractionEnabled = true
+        btn.contentMode = .scaleAspectFill
+        btn.layer.masksToBounds = true
+        btn.setImage(UIImage(named: "find_user"), for: .normal)
+        return btn
+    }()
     
     func setupUI() {
         view.addSubview(subView)
@@ -45,21 +55,31 @@ class MessagesController: UIViewController {
         subView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
         subView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         subView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
-        self.view.backgroundColor = UIColor.white
-        let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
+        let halo = PulsingHaloLayer()
+        halo.position = view.center
+        halo.radius = 160
+        halo.backgroundColor = UIColor.white.cgColor
+        halo.haloLayerNumber = 3
+        view.layer.addSublayer(halo)
+        halo.start()
+        view.addSubview(searchButton)
+        searchButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        searchButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        searchButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        searchButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+
+        self.view.backgroundColor = UIColor(r: 244, g: 66, b: 66)
+//        let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
         let leftBarButtonImage = UIImage(named: "setting")?.withRenderingMode(.alwaysOriginal)
-        
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
         
-        self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
-        self.navigationController?.navigationBar.titleTextAttributes = textAttributes
-        self.navigationController?.navigationBar.isTranslucent = false
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleNewMessage))
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleNewMessage))
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftBarButtonImage,style: .plain, target: self, action: #selector(handleSetting))
         
-        }
+    }
     
     func handleSetting() {
         let settingController = SettingController()
@@ -71,7 +91,7 @@ class MessagesController: UIViewController {
     func checkIfUserIsLoggedIn() {
         if FIRAuth.auth()?.currentUser?.uid == nil {
             perform(#selector(handleAutomaticallyLogout), with: nil, afterDelay: 0)
-        
+            
         }
         else {
             fetchUser()
@@ -96,9 +116,9 @@ class MessagesController: UIViewController {
     func setUpNavBar(user: User) {
         self.navigationItem.title = user.name
         self.navigationController?.navigationBar.tintColor = UIColor.white
-//        self.messages.removeAll()
-//        self.messagesDict.removeAll()
-//        self.tableView.reloadData()
+        //        self.messages.removeAll()
+        //        self.messagesDict.removeAll()
+        //        self.tableView.reloadData()
         let titleView = UIView()
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -108,7 +128,7 @@ class MessagesController: UIViewController {
         nameLabel.attributedText = myMutableString
         nameLabel.textAlignment = .center
         titleView.addSubview(nameLabel)
-
+        
         nameLabel.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
         nameLabel.rightAnchor.constraint(equalTo: titleView.rightAnchor).isActive = true
         nameLabel.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
@@ -123,23 +143,23 @@ class MessagesController: UIViewController {
         self.navigationController?.pushViewController(chatLogController, animated: true)
     }
     
-//    func showAnonymousChatController(user : User){
-//        let anonymousChatController = AnonymousChatController(collectionViewLayout: UICollectionViewFlowLayout())
-//        anonymousChatController.user = user
-//        self.navigationController?.pushViewController(anonymousChatController, animated: true)
-//    }
+    //    func showAnonymousChatController(user : User){
+    //        let anonymousChatController = AnonymousChatController(collectionViewLayout: UICollectionViewFlowLayout())
+    //        anonymousChatController.user = user
+    //        self.navigationController?.pushViewController(anonymousChatController, animated: true)
+    //    }
     
     func handleNewMessage() {
-//        let newMessageController = NewMessageController()
-//        newMessageController.messagesController = self
-//        let nav = UINavigationController(rootViewController: newMessageController)
-//        present(nav, animated: true, completion:  nil)
+        //        let newMessageController = NewMessageController()
+        //        newMessageController.messagesController = self
+        //        let nav = UINavigationController(rootViewController: newMessageController)
+        //        present(nav, animated: true, completion:  nil)
         let user = User()
         let anonymousChatController = AnonymousChatController(collectionViewLayout: UICollectionViewFlowLayout())
         anonymousChatController.user = user
         self.navigationController?.pushViewController(anonymousChatController, animated: true)
     }
-
+    
     var myConnectionRef : FIRDatabaseReference?
     func handleUserConnectionState() {
         let connectedRef = FIRDatabase.database().reference(withPath: ".info/connected")

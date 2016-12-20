@@ -123,7 +123,7 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
     }
     
     func setupUI() {
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(r: 244, g: 66, b: 66)
         
         //update the image for that shit
         self.currentUser.observeSingleEvent(of: .value, with: { (snapshot) in
