@@ -69,7 +69,6 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         //        pairingWithStranger(channelRef: channelRef)
         hideHUD()
         self.observeMessages()
-        self.handleAppTerminated()
         self.handleChannelTerminated()
     }
     
@@ -85,7 +84,6 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
             }
         })
         self.observeMessages()
-        self.handleAppTerminated()
         self.handleChannelTerminated()
     }
     
@@ -98,7 +96,9 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     }
     
     func handleAppTerminated(){
-        FIRDatabase.database().reference().child("users-online").observe(.childRemoved, with: {(snapshot) in
+        print("IM HERE")
+        FIRDatabase.database().reference().child("presence").observe(.childRemoved, with: {(snapshot) in
+            print("A user has been logged out")
             if (snapshot.key == self.userID!) {
                 self.removeChannel()
                 self.anonymousChannelRef.removeAllObservers()
@@ -172,6 +172,10 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.keyboardDismissMode = .interactive
         self.navigationController?.navigationBar.tintColor = UIColor.white
+        
+        NotificationCenter.default.addObserver(forName: APP_TERMINATE, object: nil, queue: nil, using: { notification in
+            self.removeChannel()
+        })
         lookingForChannel()
         hideKeyboard()
         setupKeyBoard()

@@ -13,15 +13,7 @@ class MessagesController: UIViewController {
 //    var messagesDict = [String : Message]()
 //    
 //    var messages = [Message]()
-    let subView : UILabel = {
-        let lb = UILabel()
-        lb.backgroundColor = UIColor(r: 244, g: 66, b: 66)
-        lb.text = "TALKERS TEAM © all rights reserved"
-        lb.textColor = UIColor.white
-        lb.textAlignment = .center
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        return lb
-    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -34,7 +26,19 @@ class MessagesController: UIViewController {
 //        tableView.register(UserCell.self, forCellReuseIdentifier: "cellID")
     }
     var timer : Timer?
-
+    
+    let subView : UILabel = {
+        let lb = UILabel()
+        lb.backgroundColor = UIColor(r: 244, g: 66, b: 66)
+        lb.text = "TALKERS TEAM © all rights reserved"
+        lb.textColor = UIColor.white
+        lb.textAlignment = .center
+        lb.translatesAutoresizingMaskIntoConstraints = false
+        return lb
+    }()
+    
+    
+    
     func setupUI() {
         view.addSubview(subView)
         subView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
@@ -139,7 +143,7 @@ class MessagesController: UIViewController {
     var myConnectionRef : FIRDatabaseReference?
     func handleUserConnectionState() {
         let connectedRef = FIRDatabase.database().reference(withPath: ".info/connected")
-        let usersOnlineRef = FIRDatabase.database().reference().child("users-online")
+        let usersOnlineRef = FIRDatabase.database().reference().child("presence")
         
         connectedRef.observe(.value, with: { (snapshot) in
             guard let connected = snapshot.value as? Bool , connected else { return }
