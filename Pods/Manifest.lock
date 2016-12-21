@@ -54,6 +54,7 @@ PODS:
     - GoogleSymbolUtilities (~> 1.0)
   - NVActivityIndicatorView (3.0)
   - PulsingHalo (0.2.3)
+  - SkyFloatingLabelTextField (2.0.0)
   - TwilioVideo (1.0.0-beta2)
 
 DEPENDENCIES:
@@ -64,6 +65,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - NVActivityIndicatorView
   - PulsingHalo
+  - SkyFloatingLabelTextField (~> 2.0.0)
   - TwilioVideo (= 1.0.0-beta2)
 
 SPEC CHECKSUMS:
@@ -82,8 +84,9 @@ SPEC CHECKSUMS:
   GoogleUtilities: 56c5ac05b7aa5dc417a1bb85221a9516e04d7032
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PulsingHalo: f0fe19699182eb959e4bc333838a2609ef7f7d48
+  SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   TwilioVideo: a70ad76b2dcfb583897792714099d3e38d316535
 
-PODFILE CHECKSUM: 908f9e0c8673fb00d8d8a703bf19357f03889094
+PODFILE CHECKSUM: 8f16fd3a4ea12c1581b23e33f3a7ce3de2edce76
 
 COCOAPODS: 1.1.1

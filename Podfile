@@ -17,4 +17,5 @@ target 'TalkerProject' do
   pod 'NVActivityIndicatorView'
   pod 'TwilioVideo', '1.0.0-beta2'
   pod "PulsingHalo"
+  pod 'SkyFloatingLabelTextField', '~> 2.0.0'
 end

@@ -9,13 +9,14 @@
 import UIKit
 import Firebase
 import BetterSegmentedControl
+import SkyFloatingLabelTextField
 
 class LoginController: UIViewController {
     
     //the container view to input email and password to login
     let inputsViewContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
         view.layer.masksToBounds = true
@@ -23,23 +24,35 @@ class LoginController: UIViewController {
     }()
     
     //the textfields inside the above container view
-    let nameTextField: UITextField = {
-        let textField = UITextField()
+    let nameTextField: SkyFloatingLabelTextField = {
+        let textField = SkyFloatingLabelTextField()
         textField.placeholder = "Username"
+        textField.lineColor = UIColor.clear
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.selectedTitleColor = UIColor.white
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    let emailTextField: UITextField = {
-        let textField = UITextField()
+    let emailTextField: SkyFloatingLabelTextField = {
+        let textField = SkyFloatingLabelTextField()
         textField.placeholder = "Email"
+        textField.lineColor = UIColor.clear
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.selectedTitleColor = UIColor.white
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    let pwTextField: UITextField = {
-        let textField = UITextField()
+    let pwTextField: SkyFloatingLabelTextField = {
+        let textField = SkyFloatingLabelTextField()
         textField.placeholder = "Password"
+        textField.lineColor = UIColor.clear
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.selectedTitleColor = UIColor.white
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.isSecureTextEntry = true
         return textField
@@ -167,21 +180,6 @@ class LoginController: UIViewController {
         })
     }
     
-    //the seperator between each textfield inside the above container view
-    let emailSeparator : UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(r: 220, g: 220, b: 220)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let nameSeparator : UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(r: 220, g: 220, b: 220)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     //the app icon
     let appIconView : UIImageView = {
         let imageView = UIImageView()
@@ -189,18 +187,27 @@ class LoginController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-
+    
+    let backgroundImage : UIImageView = {
+        let iv = UIImageView()
+        iv.image = UIImage(named: "login_background")
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.contentMode = .scaleAspectFill
+        return iv
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        view.backgroundColor = UIColor(r: 69, g: 72, b: 76)
-
+        //view.backgroundColor = UIColor(r: 69, g: 72, b: 76)
+//        view.backgroundColor = UIColor(patternImage: UIImage(named: "login_background")!)
         view.addSubview(inputsViewContainer)
         view.addSubview(loginRegisterButton)
         view.addSubview(appIconView)
         view.addSubview(loginRegisterControl)
+        view.addSubview(backgroundImage)
+        view.sendSubview(toBack: backgroundImage)
         
         hideKeyboard()
         setupInputsViewConstaints()
@@ -220,6 +227,11 @@ class LoginController: UIViewController {
         appIconView.bottomAnchor.constraint(equalTo:  loginRegisterControl.topAnchor, constant: -12).isActive = true
         appIconView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         appIconView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        
+        backgroundImage.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        backgroundImage.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        backgroundImage.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        backgroundImage.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
     
     //setup the autolayout for the login/register segmented control
@@ -240,13 +252,11 @@ class LoginController: UIViewController {
         inputsViewContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         inputsViewContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         inputsViewContainer.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
-        inputsViewContainerHeightAnchor = inputsViewContainer.heightAnchor.constraint(equalToConstant: 150)
+        inputsViewContainerHeightAnchor = inputsViewContainer.heightAnchor.constraint(equalToConstant: 180)
         inputsViewContainerHeightAnchor?.isActive = true
         
         inputsViewContainer.addSubview(nameTextField)
-        inputsViewContainer.addSubview(emailSeparator)
         inputsViewContainer.addSubview(emailTextField)
-        inputsViewContainer.addSubview(nameSeparator)
         inputsViewContainer.addSubview(pwTextField)
         
         //set constraint for emailTextField
@@ -256,28 +266,16 @@ class LoginController: UIViewController {
         nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: 1/3)
         nameTextFieldHeightAnchor?.isActive = true
         
-        //set constraint for phoneSeparator
-        emailSeparator.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor).isActive = true
-        emailSeparator.topAnchor.constraint(equalTo: nameTextField.bottomAnchor).isActive = true
-        emailSeparator.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
-        emailSeparator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
         //set constraint for nameTextField
         emailTextField.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor, constant: 12).isActive = true
-        emailTextField.topAnchor.constraint(equalTo: emailSeparator.topAnchor).isActive = true
+        emailTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor).isActive = true
         emailTextField.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
         emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: 1/3)
         emailTextFieldHeightAnchor?.isActive = true
         
-        //set constraint for userNameSeparator
-        nameSeparator.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor).isActive = true
-        nameSeparator.topAnchor.constraint(equalTo: emailTextField.bottomAnchor).isActive = true
-        nameSeparator.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
-        nameSeparator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
         //set constraint for pwTextField
         pwTextField.leftAnchor.constraint(equalTo: inputsViewContainer.leftAnchor, constant: 12).isActive = true
-        pwTextField.topAnchor.constraint(equalTo: nameSeparator.bottomAnchor).isActive = true
+        pwTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor).isActive = true
         pwTextField.widthAnchor.constraint(equalTo: inputsViewContainer.widthAnchor).isActive = true
         pwTextFieldHeightAnchor = pwTextField.heightAnchor.constraint(equalTo: inputsViewContainer.heightAnchor, multiplier: 1/3)
         pwTextFieldHeightAnchor?.isActive = true
@@ -288,7 +286,7 @@ class LoginController: UIViewController {
     func setupLoginRegisterButtonConstraints() {
         //needs x, y, height, width
         loginRegisterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loginRegisterButton.topAnchor.constraint(equalTo: inputsViewContainer.bottomAnchor, constant: 20).isActive = true
+        loginRegisterButton.topAnchor.constraint(equalTo: inputsViewContainer.bottomAnchor, constant: 50).isActive = true
         loginRegisterButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
         loginRegisterButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }

@@ -138,7 +138,7 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
         }
         
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
-                              NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
+                              NSFontAttributeName: UIFont(name: "HelveticaNeue-Bold", size: 20)! ] as [String : Any]
         
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
         self.navigationController?.navigationBar.isTranslucent = false

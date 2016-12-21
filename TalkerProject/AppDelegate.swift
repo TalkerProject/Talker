@@ -23,8 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
-        UINavigationBar.appearance().backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+        UINavigationBar.appearance().backgroundColor = UIColor(r: 244, g: 66, b: 66)
         UINavigationBar.appearance().isTranslucent = true
+        UIApplication.shared.statusBarStyle = .lightContent
 
         return true
     }

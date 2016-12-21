@@ -90,7 +90,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     func handleChannelTerminated() {
         if (connectedChannel != "") {
             anonymousChannelRef.child(connectedChannel).observe(.childRemoved, with: { snapshot in
-                _ = self.navigationController?.popViewController(animated: true)
+                self.showHUDOnKickedOut()
             })
         }
     }
@@ -168,7 +168,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         super.viewDidLoad()
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         collectionView?.alwaysBounceVertical = true
-        collectionView?.backgroundColor = UIColor.white
+        collectionView?.backgroundColor = UIColor(r: 244, g: 66, b: 66)
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.keyboardDismissMode = .interactive
         self.navigationController?.navigationBar.tintColor = UIColor.white
@@ -257,7 +257,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     var originalImageView : UIImageView?
     
     func performZoomInToViewImageMessage(originalImageView : UIImageView) {
-        hideKeyboard()
+        dismissKeyboard()
         originalImageFrame = originalImageView.superview?.convert(originalImageView.frame, to: nil)
         self.originalImageView = originalImageView
         self.originalImageView?.isHidden = true
@@ -581,6 +581,22 @@ extension AnonymousChatController {
         spinnerActivity.button.addTarget(self, action: #selector(handleCancelOnHUD), for: .touchUpInside)
         spinnerActivity.button.isUserInteractionEnabled = true
         self.inputAccessoryView?.isUserInteractionEnabled = false
+    }
+    
+    func showHUDOnKickedOut() {
+        spinnerActivity = MBProgressHUD.showAdded(to: self.view, animated: true)
+        spinnerActivity.label.text = "Your partner has gone:("
+        spinnerActivity.detailsLabel.text = "Press OK to dismiss"
+        spinnerActivity.mode = MBProgressHUDMode.text
+        spinnerActivity.button.setTitle("OK", for: .normal)
+        spinnerActivity.button.addTarget(self, action: #selector(dismissThisView), for: .touchUpInside)
+        spinnerActivity.button.isUserInteractionEnabled = true
+        self.inputAccessoryView?.isUserInteractionEnabled = false
+    }
+    
+    func dismissThisView() {
+        self.spinnerActivity.hide(animated: true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     func hideHUD() {

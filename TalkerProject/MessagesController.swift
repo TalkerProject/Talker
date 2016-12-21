@@ -72,7 +72,7 @@ class MessagesController: UIViewController {
 //        let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
         let leftBarButtonImage = UIImage(named: "setting")?.withRenderingMode(.alwaysOriginal)
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
-                              NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)! ] as [String : Any]
+                              NSFontAttributeName: UIFont(name: "HelveticaNeue-Bold", size: 20)! ] as [String : Any]
         
         
         navigationController?.navigationBar.titleTextAttributes = textAttributes
@@ -124,7 +124,7 @@ class MessagesController: UIViewController {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         titleView.frame = CGRect(x: 0, y: 0, width: 200, height: 40)
         let myMutableString = NSMutableAttributedString(string: user.name!, attributes: [NSForegroundColorAttributeName: UIColor.white,
-                                                                                         NSFontAttributeName: UIFont(name: "HelveticaNeue-Light", size: 20)!])
+                                                                                         NSFontAttributeName: UIFont(name: "HelveticaNeue-Bold", size: 20)!])
         nameLabel.attributedText = myMutableString
         nameLabel.textAlignment = .center
         titleView.addSubview(nameLabel)

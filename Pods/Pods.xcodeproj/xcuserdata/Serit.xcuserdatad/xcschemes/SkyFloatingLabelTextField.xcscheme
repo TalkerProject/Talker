@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C068A58B0DECF71FC3B64A1C1B68BBC"
-               BuildableName = "BetterSegmentedControl.framework"
-               BlueprintName = "BetterSegmentedControl"
+               BlueprintIdentifier = "32FD86B5E3DBA931944A8E0CAF8B2226"
+               BuildableName = "SkyFloatingLabelTextField.framework"
+               BlueprintName = "SkyFloatingLabelTextField"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3C068A58B0DECF71FC3B64A1C1B68BBC"
-            BuildableName = "BetterSegmentedControl.framework"
-            BlueprintName = "BetterSegmentedControl"
+            BlueprintIdentifier = "32FD86B5E3DBA931944A8E0CAF8B2226"
+            BuildableName = "SkyFloatingLabelTextField.framework"
+            BlueprintName = "SkyFloatingLabelTextField"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
