@@ -18,7 +18,7 @@ The following **required** functionality is completed:
 - [x] User can send message
 - [x] User can send video
 - [x] User can chat with another user who is using the ReactJS version of this app.
-- [] User can send stickers
+- [x] User can send stickers
 
 ## Video Walkthrough
 
