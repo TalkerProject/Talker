@@ -88,7 +88,7 @@ class MessageCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 10
         imageView.layer.masksToBounds = true
         imageView.backgroundColor = UIColor.clear
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapImageMessage)))

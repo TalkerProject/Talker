@@ -14,7 +14,7 @@ import AVFoundation
 import AVKit
 import Stickerpipe
 
-class AnonymousChatController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class AnonymousChatController : UICollectionViewController, UITextViewDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var chatID = ""  // for video call
     let cellID = "cellCollectionID"
     var spinnerActivity : MBProgressHUD!
@@ -24,7 +24,8 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
             self.navigationItem.title = "Anonymous User"
             
             // just added by Eastern Neverlose
-            let videoCall : UIBarButtonItem = UIBarButtonItem(title: "Video Call", style: UIBarButtonItemStyle.plain, target: self, action: #selector(AnonymousChatController.videoCallButtonClicked))
+            let rightBarButtonImage = UIImage(named: "video_call")?.withRenderingMode(.alwaysOriginal)
+            let videoCall = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleVideoCall))
             
             self.navigationItem.rightBarButtonItem = videoCall
         }
@@ -39,7 +40,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     
     // just added by Eastern Neverlose
     // go to the VideoCallController
-    func videoCallButtonClicked() {
+    func handleVideoCall() {
         let videoCallController = VideoCallController()
         chatID = randomStringGenerator()
         videoCallController.hotelRoomNumber = chatID
@@ -132,7 +133,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         let channelRef = anonymousChannelRef.child(connectedChannel)
         channelRef.child("users").setValue(2)
         //        pairingWithStranger(channelRef: channelRef)
-        hideHUD()
+        showHUDWhenMatched()
         self.observeMessages()
         self.handleChannelTerminated()
     }
@@ -145,7 +146,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         
         channelRef.observe(.childChanged, with: { (snapshot) in
             if snapshot.value as? Int == 2 {
-                self.hideHUD()
+                self.showHUDWhenMatched()
             }
         })
         self.observeMessages()
@@ -155,7 +156,10 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     func handleChannelTerminated() {
         if (connectedChannel != "") {
             anonymousChannelRef.child(connectedChannel).observe(.childRemoved, with: { snapshot in
-                self.dismissThisView()
+                if (snapshot.key == "users") {
+                    (snapshot.value as? Int == 1) ? self.dismissThisView() : self.showHUDOnKickedOut()
+                }
+                
             })
         }
     }
@@ -226,7 +230,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         super.viewDidLoad()
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         collectionView?.alwaysBounceVertical = true
-        collectionView?.backgroundColor = UIColor(r: 244, g: 66, b: 66)
+        collectionView?.backgroundColor = UIColor.white
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.keyboardDismissMode = .interactive        
         NotificationCenter.default.addObserver(forName: APP_TERMINATE, object: nil, queue: nil, using: { notification in
@@ -527,19 +531,23 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     
     var stickerController : STKStickerController = STKStickerController()
     
-    
-    
-    lazy var inputsTextField : UITextField = {
-        let textField = UITextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Enter messages....."
-        textField.delegate = self
-        return textField
+    lazy var inputsTextView : UITextView = {
+        let tv = UITextView()
+        tv.font = UIFont(name: "ArialMT", size: 18)
+        tv.layer.cornerRadius = 7
+        tv.layer.borderWidth = 1
+        tv.layer.borderColor = UIColor.black.cgColor
+        tv.textContainerInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 25)
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        return tv
     }()
+    
+    var containerViewHeightConstraint = 50
     
     lazy var inputViewContainer : UIView = {
         let containerView = UIView()
-        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
+        containerView.frame = CGRect(x: 0, y: 0, width: Int(self.view.frame.width), height: self.containerViewHeightConstraint)
+        print(self.containerViewHeightConstraint)
         containerView.backgroundColor = UIColor.white
         
         let uploadImageView = UIImageView()
@@ -566,21 +574,26 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         sendButtonView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         sendButtonView.heightAnchor.constraint(equalToConstant: 28).isActive = true
         
-        containerView.addSubview(self.inputsTextField)
-        self.inputsTextField.rightAnchor.constraint(equalTo: sendButtonView.leftAnchor, constant: 8).isActive = true
-        self.inputsTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 8).isActive = true
-        self.inputsTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-        self.inputsTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        containerView.addSubview(self.inputsTextView)
+        self.inputsTextView.rightAnchor.constraint(equalTo: sendButtonView.leftAnchor, constant: -8).isActive = true
+        self.inputsTextView.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 8).isActive = true
+        self.inputsTextView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        self.inputsTextView.heightAnchor.constraint(equalToConstant: 35).isActive = true
+       
+        //setup Sticker Controller
+        self.stickerController.textInputView = self.inputsTextView
+        self.stickerController.delegate = self
+
         
         let lineSepeartor = UIView()
         lineSepeartor.backgroundColor = UIColor.darkGray
         lineSepeartor.translatesAutoresizingMaskIntoConstraints = false
-        lineSepeartor.alpha = 0.5
+        lineSepeartor.alpha = 0
         
         containerView.addSubview(lineSepeartor)
         lineSepeartor.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         lineSepeartor.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        lineSepeartor.bottomAnchor.constraint(equalTo: self.inputsTextField.topAnchor).isActive = true
+        lineSepeartor.bottomAnchor.constraint(equalTo: self.inputsTextView.topAnchor).isActive = true
         lineSepeartor.heightAnchor.constraint(equalToConstant: 1).isActive = true
         return containerView
     }()
@@ -596,10 +609,10 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     }
     
     func handleSend() {
-        sendMessagesWithProperties(properties: ["text" : inputsTextField.text!])
+        sendMessagesWithProperties(properties: ["text" : inputsTextView.text!])
     }
     
-    private func sendMessagesWithProperties(properties : [String : Any]) {
+    func sendMessagesWithProperties(properties : [String : Any]) {
         let fromID = FIRAuth.auth()?.currentUser?.uid
         let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
         
@@ -611,7 +624,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         let ref = anonymousChannelRef.child(connectedChannel).child("messages")
         let messagesRef = ref.childByAutoId()
         messagesRef.updateChildValues(values)
-        self.inputsTextField.text = nil
+        self.inputsTextView.text = nil
     }
     
     private func removeAnonymousMessages() {
@@ -639,12 +652,11 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
             }
         })
     }
-    
-    private func uploadImageToFireBaseStorage(imageToUpload : UIImage, completion: @escaping (_ imageURL: String) -> ()) {
+    func uploadImageToFireBaseStorage(imageToUpload : UIImage, completion: @escaping (_ imageURL: String) -> ()) {
         let imageName = NSUUID().uuidString
         let ref = FIRStorage.storage().reference().child("image_messages").child(imageName)
         
-        if let uploadData = UIImageJPEGRepresentation(imageToUpload, 0.2) {
+        if let uploadData = UIImageJPEGRepresentation(imageToUpload,1) {
             ref.put(uploadData, metadata: nil, completion: { (metadata, error) in
                 if error != nil {
                     print(error!)
@@ -655,6 +667,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
             })
         }
     }
+    let imageView = UIImageView()
 }
 
 extension AnonymousChatController : messageCellProtocol {
@@ -689,7 +702,7 @@ extension AnonymousChatController {
         spinnerActivity.detailsLabel.text = "Press OK to dismiss"
         spinnerActivity.mode = MBProgressHUDMode.text
         spinnerActivity.button.setTitle("OK", for: .normal)
-        spinnerActivity.button.addTarget(self, action: #selector(handleCancelOnHUD), for: .touchUpInside)
+        spinnerActivity.button.addTarget(self, action: #selector(dismissThisView), for: .touchUpInside)
         spinnerActivity.button.isUserInteractionEnabled = true
         self.inputAccessoryView?.isUserInteractionEnabled = false
     }
@@ -699,11 +712,12 @@ extension AnonymousChatController {
         _ = self.navigationController?.popViewController(animated: true)
     }
     
-    func hideHUD() {
+    func showHUDWhenMatched() {
         self.spinnerActivity.mode = MBProgressHUDMode.customView
         self.spinnerActivity.customView = UIImageView(image: UIImage(named: "checkmark"))
         self.spinnerActivity.label.text = "Matched !!!"
         self.spinnerActivity.hide(animated: true, afterDelay: 2)
+        self.spinnerActivity.button.alpha = 0
         self.view.isUserInteractionEnabled = true
         self.inputAccessoryView?.isUserInteractionEnabled = true
 
@@ -724,6 +738,21 @@ extension AnonymousChatController : STKStickerControllerDelegate {
     func stickerControllerViewControllerForPresentingModalView() -> UIViewController {
         return self
     }
+    
+    func stickerController(_ stickerController: STKStickerController!, didSelectStickerWithMessage message: String!) {
+        fill(withStickerMessage: message, downloaded: self.stickerController.isStickerPackDownloaded(message))
+    }
+    
+    func fill(withStickerMessage message: String, downloaded: Bool) {
+        if STKStickersManager.isStickerMessage(message) {
+            STKImageManager().getImageForStickerMessage(message,  withProgress: nil, andCompletion: { error, image in
+                self.uploadImageToFireBaseStorage(imageToUpload: image!, completion: { (imageURL) in
+                    self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageHeight" : image?.size.height ?? 80,"imageWidth" : image?.size.width ?? 80])
+                })            })
+            
+        }
+    }
+    
     
 }
 
