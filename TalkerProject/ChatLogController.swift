@@ -200,7 +200,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 // also check who send this message. if sent by you, you cannot touch it to answer
                 let isFromSender = message.fromID == FIRAuth.auth()?.currentUser?.uid
                 if checkTimestamp(time: message.timeStamp!) && !isFromSender {
-                    cell.textView.text = "📞 calling you, tap to answer"
+                    cell.textView.text = "📞 video calling, tap to answer"
                     // add gesture to it, so we can click to this message
                     // and to straight to videoCallController
                     cell.textView.isUserInteractionEnabled = true

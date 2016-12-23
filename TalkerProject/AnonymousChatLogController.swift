@@ -15,12 +15,18 @@ import AVKit
 import Stickerpipe
 
 class AnonymousChatController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    var chatID = ""  // for video call
     let cellID = "cellCollectionID"
     var spinnerActivity : MBProgressHUD!
     let anonymousChannelRef = FIRDatabase.database().reference().child("channel")
     var user : User? {
         didSet {
             self.navigationItem.title = "Anonymous User"
+            
+            // just added by Eastern Neverlose
+            let videoCall : UIBarButtonItem = UIBarButtonItem(title: "Video Call", style: UIBarButtonItemStyle.plain, target: self, action: #selector(AnonymousChatController.videoCallButtonClicked))
+            
+            self.navigationItem.rightBarButtonItem = videoCall
         }
     }
     var messages = [Message]()
@@ -28,6 +34,65 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     var connectedChannel = ""
     var channelCount = 0
     let userID = FIRAuth.auth()?.currentUser?.uid
+    
+    // Video Call
+    
+    // just added by Eastern Neverlose
+    // go to the VideoCallController
+    func videoCallButtonClicked() {
+        let videoCallController = VideoCallController()
+        chatID = randomStringGenerator()
+        videoCallController.hotelRoomNumber = chatID
+        videoCallController.isInviter = true
+        
+        // send a special message to indicate a video call to invite your friend
+        // this message is as #20 random characters|
+        sendMessagesWithProperties(properties: ["text" : "#" + chatID + "|"])
+        
+        self.navigationController?.pushViewController(videoCallController, animated: true)
+    }
+    
+    // copied from stackOverFlow
+    func randomStringGenerator(length: Int = 20) -> String {
+        let base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        var randomString: String = ""
+        
+        for _ in 0..<length {
+            let randomValue = arc4random_uniform(UInt32(base.characters.count))
+            randomString += "\(base[base.index(base.startIndex, offsetBy: Int(randomValue))])"
+        }
+        return randomString
+    }
+    
+    func specialMessagefilter(message: String) -> Bool{
+        if message.characters.first == "#" && message.characters.last == "|" {
+            if message.characters.count == 22 {
+                return true
+            }
+        }
+        return false
+    }
+    
+    func checkTimestamp(time: NSNumber) -> Bool{
+        let timeStamp : Int = Int(NSDate().timeIntervalSince1970)
+        if timeStamp - Int(time) < 60 {
+            return true
+        }
+        return false
+    }
+    
+    // this is the person get invited to the call
+    func VideoCallMessageTouched() {
+        let videoCallController = VideoCallController()
+        videoCallController.hotelRoomNumber = chatID
+        videoCallController.isInviter = false
+        
+        self.navigationController?.pushViewController(videoCallController, animated: true)
+    }
+    
+    // Video Call End
+    
+    
     
     func lookingForChannel() {
         showHUD()
@@ -235,7 +300,33 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         cell.anonymousChatLogController = self
         cell.message = message
         cell.delegate = self
-        cell.textView.text = message.text
+        
+        // added by Eastern Neverlose
+        // check if this message if a special message
+        if message.text != nil {
+            if specialMessagefilter(message: message.text!) {
+                cell.textView.text = "📞 video called"
+                
+                // check if this message is new, sent less than 1 minute by now
+                // also check who send this message. if sent by you, you cannot touch it to answer
+                let isFromSender = message.fromID == FIRAuth.auth()?.currentUser?.uid
+                if checkTimestamp(time: message.timeStamp!) && !isFromSender {
+                    cell.textView.text = "📞 video calling, tap to answer"
+                    // add gesture to it, so we can click to this message
+                    // and to straight to videoCallController
+                    cell.textView.isUserInteractionEnabled = true
+                    let tap = UITapGestureRecognizer(target: self, action: #selector(VideoCallMessageTouched))
+                    cell.textView.addGestureRecognizer(tap)
+                    var mes = message.text!
+                    
+                    _ = mes.characters.popFirst()
+                    _ = mes.characters.popLast()
+                    chatID = mes
+                }
+            } else {
+                cell.textView.text = message.text!
+            }
+        }
         
         if let text = message.text {
             cell.bubbleWidthAnchor?.constant = getEstimatedFrameForText(text: text).width + 16
