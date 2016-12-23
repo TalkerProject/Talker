@@ -14,6 +14,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>DFImageManager.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>MBProgressHUD.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>NVActivityIndicatorView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -25,6 +35,11 @@
 			<false/>
 		</dict>
 		<key>PulsingHalo.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>SDWebImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -42,12 +57,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1C3436CEA5C3D39764C5F54374794ECB</key>
+		<key>19EC8FE8C5B71DE4DA2AC7338FD4B8C2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>32FD86B5E3DBA931944A8E0CAF8B2226</key>
+		<key>1C3436CEA5C3D39764C5F54374794ECB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -57,12 +72,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>60EF3923A0C9BECAE235DB84179E21A5</key>
+		<key>553546BA0F7A8110E9A38AACAC0CDF5E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>BC8143E2EA2965187396FB30BAC3E436</key>
+		<key>69F732800AEE72C6BA84E33F4A32C71A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>77B3FA8DE569717560C2149250D94864</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7CAEA636EEAD708CE7044F7C3F1C446A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DBA6001481CEA0EBA031CC5C94508FAA</key>
 		<dict>
 			<key>primary</key>
 			<true/>

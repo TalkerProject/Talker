@@ -8,25 +8,26 @@
 
 import UIKit
 import Firebase
+import Stickerpipe
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
+    let userID : String = {
+        let str = UIDevice.current.identifierForVendor!.uuidString
+        return str
+    }()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FIRApp.configure()
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         window?.rootViewController = UINavigationController(rootViewController: MessagesController())
-       
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-        UINavigationBar.appearance().shadowImage = UIImage()
-        UINavigationBar.appearance().backgroundColor = UIColor(r: 244, g: 66, b: 66)
-        UINavigationBar.appearance().isTranslucent = true
-        UIApplication.shared.statusBarStyle = .lightContent
-
+        
+        STKStickersManager.initWithApiKey("22be7be3fb31c5bee774058914928994")
+        STKStickersManager.setUserKey(userID)
         return true
     }
 

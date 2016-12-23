@@ -17,7 +17,15 @@ class MessagesController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.navigationController?.navigationBar
+            .shadowImage = UIImage()
+        self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.tintColor = UIColor.white
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -67,16 +75,16 @@ class MessagesController: UIViewController {
         searchButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
         searchButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         searchButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-
+        
         self.view.backgroundColor = UIColor(r: 244, g: 66, b: 66)
-//        let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
+        //        let rightBarButtonImage = UIImage(named: "new_message")?.withRenderingMode(.alwaysOriginal)
         let leftBarButtonImage = UIImage(named: "setting")?.withRenderingMode(.alwaysOriginal)
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Bold", size: 20)! ] as [String : Any]
         
         
         navigationController?.navigationBar.titleTextAttributes = textAttributes
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleNewMessage))
+        //        navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightBarButtonImage, style: .plain, target: self, action: #selector(handleNewMessage))
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftBarButtonImage,style: .plain, target: self, action: #selector(handleSetting))
         
     }
@@ -115,7 +123,6 @@ class MessagesController: UIViewController {
     //this function is to setup the navbar UI after fetching user
     func setUpNavBar(user: User) {
         self.navigationItem.title = user.name
-        self.navigationController?.navigationBar.tintColor = UIColor.white
         //        self.messages.removeAll()
         //        self.messagesDict.removeAll()
         //        self.tableView.reloadData()

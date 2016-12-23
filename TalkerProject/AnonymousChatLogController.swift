@@ -12,7 +12,7 @@ import AFNetworking
 import MobileCoreServices
 import AVFoundation
 import AVKit
-
+import Stickerpipe
 
 class AnonymousChatController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let cellID = "cellCollectionID"
@@ -90,7 +90,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
     func handleChannelTerminated() {
         if (connectedChannel != "") {
             anonymousChannelRef.child(connectedChannel).observe(.childRemoved, with: { snapshot in
-                self.showHUDOnKickedOut()
+                self.dismissThisView()
             })
         }
     }
@@ -155,14 +155,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         })
     }
     
-    lazy var inputsTextField : UITextField = {
-        let textField = UITextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Enter messages....."
-        textField.delegate = self
-        textField.backgroundColor = UIColor.white
-        return textField
-    }()
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -170,12 +163,12 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor(r: 244, g: 66, b: 66)
         collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellID)
-        collectionView?.keyboardDismissMode = .interactive
-        self.navigationController?.navigationBar.tintColor = UIColor.white
-        
+        collectionView?.keyboardDismissMode = .interactive        
         NotificationCenter.default.addObserver(forName: APP_TERMINATE, object: nil, queue: nil, using: { notification in
             self.removeChannel()
         })
+        
+        
         lookingForChannel()
         hideKeyboard()
         setupKeyBoard()
@@ -183,8 +176,11 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         //        setupInputsContainer()
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
+    }
     
-    
+        
     var inImagePicker = false
     override func viewDidDisappear(_ animated: Bool) {
         if !inImagePicker {
@@ -438,6 +434,18 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         return nil
     }
     
+    var stickerController : STKStickerController = STKStickerController()
+    
+    
+    
+    lazy var inputsTextField : UITextField = {
+        let textField = UITextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.placeholder = "Enter messages....."
+        textField.delegate = self
+        return textField
+    }()
+    
     lazy var inputViewContainer : UIView = {
         let containerView = UIView()
         containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
@@ -450,7 +458,7 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadImageOrVideoTap)))
         
         containerView.addSubview(uploadImageView)
-        uploadImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 6).isActive = true
+        uploadImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 4).isActive = true
         uploadImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
         uploadImageView.heightAnchor.constraint(equalToConstant: 44).isActive = true
@@ -461,13 +469,14 @@ class AnonymousChatController : UICollectionViewController, UITextFieldDelegate,
         sendButtonView.translatesAutoresizingMaskIntoConstraints = false
         sendButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSend)))
         containerView.addSubview(sendButtonView)
+        
         sendButtonView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -8).isActive = true
         sendButtonView.widthAnchor.constraint(equalToConstant: 28).isActive = true
         sendButtonView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         sendButtonView.heightAnchor.constraint(equalToConstant: 28).isActive = true
         
         containerView.addSubview(self.inputsTextField)
-        self.inputsTextField.rightAnchor.constraint(equalTo: sendButtonView.leftAnchor).isActive = true
+        self.inputsTextField.rightAnchor.constraint(equalTo: sendButtonView.leftAnchor, constant: 8).isActive = true
         self.inputsTextField.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant: 8).isActive = true
         self.inputsTextField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         self.inputsTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
@@ -589,7 +598,7 @@ extension AnonymousChatController {
         spinnerActivity.detailsLabel.text = "Press OK to dismiss"
         spinnerActivity.mode = MBProgressHUDMode.text
         spinnerActivity.button.setTitle("OK", for: .normal)
-        spinnerActivity.button.addTarget(self, action: #selector(dismissThisView), for: .touchUpInside)
+        spinnerActivity.button.addTarget(self, action: #selector(handleCancelOnHUD), for: .touchUpInside)
         spinnerActivity.button.isUserInteractionEnabled = true
         self.inputAccessoryView?.isUserInteractionEnabled = false
     }
@@ -612,6 +621,17 @@ extension AnonymousChatController {
     func handleCancelOnHUD() {
         removeChannel()
         handleChannelTerminated()
+    }
+    
+}
+
+extension AnonymousChatController : STKStickerControllerDelegate {
+    func handleOpenStickerView() {
+        //
+    }
+    
+    func stickerControllerViewControllerForPresentingModalView() -> UIViewController {
+        return self
     }
     
 }

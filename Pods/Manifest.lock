@@ -15,6 +15,18 @@ PODS:
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
   - BetterSegmentedControl (0.5)
+  - DFImageManager (0.8.0):
+    - DFImageManager/Core (= 0.8.0)
+    - DFImageManager/NSURLSession (= 0.8.0)
+    - DFImageManager/PhotosKit (= 0.8.0)
+    - DFImageManager/UI (= 0.8.0)
+  - DFImageManager/Core (0.8.0)
+  - DFImageManager/NSURLSession (0.8.0):
+    - DFImageManager/Core
+  - DFImageManager/PhotosKit (0.8.0):
+    - DFImageManager/Core
+  - DFImageManager/UI (0.8.0):
+    - DFImageManager/Core
   - Firebase/Analytics (3.3.0):
     - FirebaseAnalytics (= 3.2.1)
   - Firebase/Auth (3.3.0):
@@ -52,9 +64,18 @@ PODS:
   - GoogleSymbolUtilities (1.1.1)
   - GoogleUtilities (1.3.1):
     - GoogleSymbolUtilities (~> 1.0)
+  - MBProgressHUD (1.0.0)
   - NVActivityIndicatorView (3.0)
   - PulsingHalo (0.2.3)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
   - SkyFloatingLabelTextField (2.0.0)
+  - StickerPipe (0.3.30):
+    - AFNetworking (= 3.1.0)
+    - DFImageManager (= 0.8.0)
+    - MBProgressHUD (= 1.0.0)
+    - SDWebImage (= 3.8.2)
   - TwilioVideo (1.0.0-beta2)
 
 DEPENDENCIES:
@@ -66,11 +87,13 @@ DEPENDENCIES:
   - NVActivityIndicatorView
   - PulsingHalo
   - SkyFloatingLabelTextField (~> 2.0.0)
+  - StickerPipe (~> 0.3.30)
   - TwilioVideo (= 1.0.0-beta2)
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   BetterSegmentedControl: db74c56602e418e9eca8f6340e0ed0a7215f5f7c
+  DFImageManager: 37d75898009b05e49d13e36576677c76847b7d2a
   Firebase: 6250071f0e2440a5c4c67b8cb6b868f868237ac3
   FirebaseAnalytics: 0fd6532cb2c3d03cd5cf26ad295ccb091efd3104
   FirebaseAuth: 5efddc3fae47042b73585f083f956462be4f5b8e
@@ -82,11 +105,14 @@ SPEC CHECKSUMS:
   GoogleParsingUtilities: 30b3896f9ee167dc78747f013d3de157ced1cadf
   GoogleSymbolUtilities: 33117db1b5f290c6fbf259585e4885b4c84b98d7
   GoogleUtilities: 56c5ac05b7aa5dc417a1bb85221a9516e04d7032
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PulsingHalo: f0fe19699182eb959e4bc333838a2609ef7f7d48
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
+  StickerPipe: e33e7f262bbf0205e33ae5efd3ee1ef50295ebe9
   TwilioVideo: a70ad76b2dcfb583897792714099d3e38d316535
 
-PODFILE CHECKSUM: 8f16fd3a4ea12c1581b23e33f3a7ce3de2edce76
+PODFILE CHECKSUM: cf798f66455d84fba46f89749c43b4bd456b40ef
 
 COCOAPODS: 1.1.1

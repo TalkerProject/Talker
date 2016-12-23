@@ -140,8 +140,11 @@ extension SettingController : UIImagePickerControllerDelegate, UINavigationContr
         let textAttributes = [NSForegroundColorAttributeName: UIColor.white,
                               NSFontAttributeName: UIFont(name: "HelveticaNeue-Bold", size: 20)! ] as [String : Any]
         
+        self.navigationController?.navigationBar
+            .shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = UIColor(r: 244, g: 66, b: 66)
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationItem.title = "Settings"
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         

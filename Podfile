@@ -18,4 +18,6 @@ target 'TalkerProject' do
   pod 'TwilioVideo', '1.0.0-beta2'
   pod "PulsingHalo"
   pod 'SkyFloatingLabelTextField', '~> 2.0.0'
+  pod "StickerPipe", "~> 0.3.30"
+
 end
