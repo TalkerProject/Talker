@@ -63,6 +63,10 @@ class VideoCallController: UIViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        AnonymousChatController.inMediaPicker = false
+    }
+    
     func calling() {
         // get access token from the tokenUrl
         

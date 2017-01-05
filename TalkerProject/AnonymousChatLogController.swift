@@ -36,7 +36,7 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
     var channelCount = 0
     let userID = FIRAuth.auth()?.currentUser?.uid
     
-    // Video Call
+    // Video Calli
     
     // just added by Eastern Neverlose
     // go to the VideoCallController
@@ -49,7 +49,7 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
         // send a special message to indicate a video call to invite your friend
         // this message is as #20 random characters|
         sendMessagesWithProperties(properties: ["text" : "#" + chatID + "|"])
-        
+        AnonymousChatController.inMediaPicker = true
         self.navigationController?.pushViewController(videoCallController, animated: true)
     }
     
@@ -250,9 +250,9 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
     }
     
         
-    var inImagePicker = false
+    static var inMediaPicker = false
     override func viewDidDisappear(_ animated: Bool) {
-        if !inImagePicker {
+        if !AnonymousChatController.inMediaPicker {
             removeChannel()
             anonymousChannelRef.removeAllObservers()
             NotificationCenter.default.removeObserver(self)
@@ -446,7 +446,7 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
         picker.delegate = self
         picker.allowsEditing = true
         picker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
-        inImagePicker = true
+        AnonymousChatController.inMediaPicker = true
         present(picker, animated: true, completion: nil)
     }
     
@@ -458,7 +458,7 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
             handleSelectImageFromPicker(info: info as [String : AnyObject])
         }
         dismiss(animated: true, completion: { completion in
-            self.inImagePicker = false
+            AnonymousChatController.inMediaPicker = false
         })
     }
     
@@ -747,7 +747,7 @@ extension AnonymousChatController : STKStickerControllerDelegate {
         if STKStickersManager.isStickerMessage(message) {
             STKImageManager().getImageForStickerMessage(message,  withProgress: nil, andCompletion: { error, image in
                 self.uploadImageToFireBaseStorage(imageToUpload: image!, completion: { (imageURL) in
-                    self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageHeight" : image?.size.height ?? 80,"imageWidth" : image?.size.width ?? 80])
+                    self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageHeight" : image?.size.height ?? 230,"imageWidth" : image?.size.width ?? 230])
                 })            })
             
         }
