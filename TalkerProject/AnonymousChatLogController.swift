@@ -252,6 +252,7 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
         
     static var inMediaPicker = false
     override func viewDidDisappear(_ animated: Bool) {
+        performSegueToReturnBack()
         if !AnonymousChatController.inMediaPicker {
             removeChannel()
             anonymousChannelRef.removeAllObservers()
@@ -491,7 +492,7 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
                 print("Fail to upload video", error!)
                 return
             }
-            
+
             //get the URL to video URL on Firebase
             if let storageVideoURL = metadata?.downloadURL()?.absoluteString {
                 if let thumbnailImage = self.thumbnailImageForLocalVideoMessage(localVideoURL: localVideoURL) {
@@ -510,7 +511,7 @@ class AnonymousChatController : UICollectionViewController, UITextViewDelegate, 
         }
         
         uploadTask.observe(.success) { (snapshot) in
-            self.navigationItem.title = self.user?.name
+            self.navigationItem.title = "Anonymous User"
         }
     }
     
@@ -747,13 +748,22 @@ extension AnonymousChatController : STKStickerControllerDelegate {
         if STKStickersManager.isStickerMessage(message) {
             STKImageManager().getImageForStickerMessage(message,  withProgress: nil, andCompletion: { error, image in
                 self.uploadImageToFireBaseStorage(imageToUpload: image!, completion: { (imageURL) in
-                    self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageHeight" : image?.size.height ?? 230,"imageWidth" : image?.size.width ?? 230])
+                    self.sendMessagesWithProperties(properties: ["imageURL" : imageURL, "imageHeight" : image?.size.height as Any
+                        ,"imageWidth" : image?.size.width as Any])
                 })            })
             
         }
     }
-    
-    
+} 
+
+extension UIViewController {
+    func performSegueToReturnBack()  {
+        if self.navigationController != nil {
+            AnonymousChatController.inMediaPicker = true
+        } else {
+            AnonymousChatController.inMediaPicker = false
+        }
+    }
 }
 
 //    func pairingWithStranger(channelRef : FIRDatabaseReference) {
