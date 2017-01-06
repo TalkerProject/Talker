@@ -2,10 +2,6 @@
 ## Course: Building IT Systems
 ## Contributors : Nguyen Duc Gia Bao, Nguyen Ngoc Xuan Trieu
 
-Libraries used:
-
-Time spent: xx hours spent in total
-
 ## User Stories
 
 The following **required** functionality is completed:
@@ -17,6 +13,7 @@ The following **required** functionality is completed:
 - [x] User can send their private messages to users anonymously ( no info revealed)
 - [x] User can send message
 - [x] User can send video
+- [x] User can do video calling
 - [x] User can chat with another user who is using the ReactJS version of this app.
 - [x] User can send stickers
 
