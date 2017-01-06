@@ -24,15 +24,9 @@ The following **required** functionality is completed:
 
 Here are some screenshot of this project
 ![alt tag](https://s28.postimg.org/fn3zi3dwd/Screen_Shot_2017_01_07_at_12_26_55_AM.png)
-
-
-[url=https://postimg.org/image/51k4637kp/][img]https://s28.postimg.org/51k4637kp/Screen_Shot_2017_01_07_at_12_27_49_AM.png[/img][/url]
-
-[url=https://postimg.org/image/nieiwwnix/][img]https://s28.postimg.org/nieiwwnix/Screen_Shot_2017_01_07_at_12_27_54_AM.png[/img][/url]
-
-[url=https://postimg.org/image/i89k5m3a1/][img]https://s28.postimg.org/i89k5m3a1/Screen_Shot_2017_01_07_at_12_30_07_AM.png[/img][/url]
-
-
+![alt tag](https://s28.postimg.org/m230erkm5/Screen_Shot_2017_01_07_at_12_27_49_AM.png)
+![alt tag](https://s28.postimg.org/jysl73kt9/Screen_Shot_2017_01_07_at_12_27_54_AM.png)
+![alt tag](https://s28.postimg.org/l2cpj25gd/Screen_Shot_2017_01_07_at_12_30_07_AM.png)
 
 
 ## License
