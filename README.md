@@ -23,7 +23,8 @@ The following **required** functionality is completed:
 ## Screenshot
 
 Here are some screenshot of this project
-[url=https://postimg.org/image/wnmvqrqxl/][img]https://s28.postimg.org/wnmvqrqxl/Screen_Shot_2017_01_07_at_12_26_55_AM.png[/img][/url]
+![alt tag](https://s28.postimg.org/fn3zi3dwd/Screen_Shot_2017_01_07_at_12_26_55_AM.png)
+
 
 [url=https://postimg.org/image/51k4637kp/][img]https://s28.postimg.org/51k4637kp/Screen_Shot_2017_01_07_at_12_27_49_AM.png[/img][/url]
 
