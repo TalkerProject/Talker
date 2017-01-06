@@ -20,17 +20,14 @@ The following **required** functionality is completed:
 - [x] User can chat with another user who is using the ReactJS version of this app.
 - [x] User can send stickers
 
-## Video Walkthrough
+## Screenshot
 
-Here's a walkthrough of implemented user stories:
-![Video Walkthrough]()
-<img src='' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+Here are some screenshot of this project
+![alt tag](http://www.upsieutoc.com/image/RrxGOr)
+![alt tag](http://url/to/img.png)
+![alt tag](http://url/to/img.png)
+![alt tag](http://url/to/img.png)
 
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
-
-## Notes
-
-Describe any challenges encountered while building the app.http://i.imgur.com/Zgqx4Ai.gifv
 
 ## License
 
